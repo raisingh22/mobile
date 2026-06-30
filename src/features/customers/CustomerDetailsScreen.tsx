@@ -8,6 +8,7 @@ import { axiosClient } from '../../api/axiosClient';
 import { ENDPOINTS } from '../../api/endpoints';
 import { colors } from '../../theme/colors';
 import { StatusBadge } from '../../components/StatusBadge';
+import { CustomerLedgerTab } from '../ledger/CustomerLedgerTab';
 
 // ── Tag definitions ────────────────────────────────────────────────
 const TAG_CONFIG: Record<string, { color: string; bg: string }> = {
@@ -148,7 +149,6 @@ export function CustomerDetailsScreen({ route, navigation }: CustomerDetailsScre
   const insets = useSafeAreaInsets();
   const { customerId } = route.params;
   const queryClient = useQueryClient();
-  const [activeTab, setActiveTab] = useState<'timeline' | 'prescriptions' | 'orders'>('timeline');
 
   const { data: customerData, isLoading: isCustLoading } = useQuery({
     queryKey: ['customer', customerId],
@@ -158,19 +158,23 @@ export function CustomerDetailsScreen({ route, navigation }: CustomerDetailsScre
     },
   });
 
-  const { data: prescriptionsData, isLoading: isPrescLoading } = useQuery({
-    queryKey: ['customer-prescriptions', customerId],
+  const { data: visitsData, isLoading: isVisitsLoading } = useQuery<any[]>({
+    queryKey: ['visits', customerId],
     queryFn: async () => {
-      const response = await axiosClient.get(ENDPOINTS.customers.prescriptions(customerId));
+      const response = await axiosClient.get(ENDPOINTS.visits.list(customerId));
       return response.data;
     },
   });
 
-  const { data: ordersData, isLoading: isOrdersLoading } = useQuery({
-    queryKey: ['customer-orders', customerId],
+  const { data: ledgerData } = useQuery<any>({
+    queryKey: ['ledger', customerId],
     queryFn: async () => {
-      const response = await axiosClient.get(ENDPOINTS.customers.orders(customerId));
-      return response.data;
+      try {
+        const response = await axiosClient.get(ENDPOINTS.ledger.details(customerId));
+        return response.data;
+      } catch {
+        return null;
+      }
     },
   });
 
@@ -190,6 +194,25 @@ export function CustomerDetailsScreen({ route, navigation }: CustomerDetailsScre
     },
   });
 
+  const deleteVisitMutation = useMutation({
+    mutationFn: async (visitId: string) => {
+      return axiosClient.delete(ENDPOINTS.visits.delete(visitId));
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['visits', customerId] });
+      queryClient.invalidateQueries({ queryKey: ['customer', customerId] });
+      queryClient.invalidateQueries({ queryKey: ['ledger', customerId] });
+      queryClient.invalidateQueries({ queryKey: ['ledgers'] });
+      queryClient.invalidateQueries({ queryKey: ['orders'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+      Toast.show({ type: 'success', text1: 'Visit Deleted', text2: 'Visit history has been updated.' });
+    },
+    onError: (error: any) => {
+      const errMsg = error.response?.data?.message || error.message || 'Delete failed';
+      Toast.show({ type: 'error', text1: 'Delete Failed', text2: errMsg });
+    },
+  });
+
   const handleDeletePress = () => {
     Alert.alert(
       'Delete Customer',
@@ -201,31 +224,18 @@ export function CustomerDetailsScreen({ route, navigation }: CustomerDetailsScre
     );
   };
 
-  // Merge prescriptions + orders into a unified timeline sorted by date desc
-  const timeline = useMemo<TimelineItem[]>(() => {
-    const prescriptions: TimelineItem[] = (prescriptionsData || []).map((p: any) => ({
-      kind: 'prescription' as const,
-      id: p.id,
-      date: p.prescriptionDate,
-      doctorName: p.doctorName,
-      rightSphere: p.rightSphere,
-      leftSphere: p.leftSphere,
-    }));
-    const orders: TimelineItem[] = (ordersData || []).map((o: any) => ({
-      kind: 'order' as const,
-      id: o.id,
-      date: o.createdAt,
-      orderNumber: o.orderNumber,
-      status: o.status,
-      total: o.total,
-      paymentStatus: o.paymentStatus,
-    }));
-    return [...prescriptions, ...orders].sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  const handleConfirmDeleteVisit = (visitId: string) => {
+    Alert.alert(
+      'Delete Visit Session',
+      'Are you sure? This will permanently delete the visit details and any spectacles orders booked in this visit.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Delete Visit', style: 'destructive', onPress: () => deleteVisitMutation.mutate(visitId) },
+      ]
     );
-  }, [prescriptionsData, ordersData]);
+  };
 
-  const isLoading = isCustLoading || isPrescLoading || isOrdersLoading;
+  const isLoading = isCustLoading || isVisitsLoading;
 
   if (isLoading) {
     return (
@@ -239,9 +249,6 @@ export function CustomerDetailsScreen({ route, navigation }: CustomerDetailsScre
   }
 
   const customer = customerData;
-  const prescriptions = prescriptionsData || [];
-  const orders = ordersData || [];
-
   const initials = customer.fullName.trim().split(/\s+/)
     .slice(0, 2).map((w: string) => w[0]).join('').toUpperCase();
 
@@ -280,7 +287,6 @@ export function CustomerDetailsScreen({ route, navigation }: CustomerDetailsScre
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 48 }}>
         {/* ── Profile hero card ── */}
         <View className="bg-card border border-border rounded-2xl overflow-hidden mb-4">
-          {/* Avatar strip */}
           <View className="bg-card px-5 pt-5 pb-4 flex-row items-center">
             <View className="w-14 h-14 rounded-full bg-[#06b6d4]/10 border-2 border-primary/40 items-center justify-center mr-4">
               <Text className="text-[#06b6d4] font-bold text-xl">{initials}</Text>
@@ -294,10 +300,8 @@ export function CustomerDetailsScreen({ route, navigation }: CustomerDetailsScre
             </View>
             {/* Quick stats */}
             <View className="items-end">
-              <Text className="text-[#06b6d4] font-bold text-lg">{prescriptions.length}</Text>
-              <Text className="text-textMuted text-[10px]">Rx</Text>
-              <Text className="text-[#10b981] font-bold text-lg mt-0.5">{orders.length}</Text>
-              <Text className="text-textMuted text-[10px]">Orders</Text>
+              <Text className="text-[#06b6d4] font-bold text-lg">{visitsData?.length || 0}</Text>
+              <Text className="text-textMuted text-[10px]">Visits</Text>
             </View>
           </View>
 
@@ -331,13 +335,32 @@ export function CustomerDetailsScreen({ route, navigation }: CustomerDetailsScre
               <View className="mt-4 pt-4 border-t border-border">
                 <View className="flex-row items-center mb-2">
                   <Ionicons name="document-text-outline" size={13} color="#71717a" />
-                  <Text className="text-textMuted text-[10px] font-bold uppercase tracking-wider ml-1.5">Clinical Notes</Text>
+                  <Text className="text-textMuted text-[10px] font-bold uppercase tracking-wider ml-1.5">Clinic Notes</Text>
                 </View>
                 <Text className="text-textSecondary text-sm leading-5">{customer.notes}</Text>
               </View>
             )}
           </View>
         </View>
+
+        {/* Outstanding Balance Due card */}
+        {ledgerData?.summary?.currentOutstandingBalance > 0 && (
+          <View className="bg-[#ef4444]/10 border border-[#ef4444]/30 rounded-2xl p-4 mb-4 flex-row justify-between items-center">
+            <View>
+              <Text className="text-[#ef4444] text-[10px] font-bold uppercase tracking-wider">Outstanding Dues Pending</Text>
+              <Text className="text-[#ef4444] text-xl font-black mt-1">₹{ledgerData.summary.currentOutstandingBalance.toLocaleString()}</Text>
+            </View>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('AddEditPayment', {
+                customerId,
+                customerName: customer.fullName,
+              })}
+              className="bg-[#ef4444] px-4 py-2 rounded-xl"
+            >
+              <Text className="text-white text-xs font-bold">Collect Payment</Text>
+            </TouchableOpacity>
+          </View>
+        )}
 
         {/* ── Family Members ── */}
         {(customer.familyMembers?.length > 0 || customer.primaryMember) && (
@@ -349,7 +372,7 @@ export function CustomerDetailsScreen({ route, navigation }: CustomerDetailsScre
               <Text className="text-text font-bold text-sm">Household</Text>
             </View>
             <View className="p-4">
-              {/* Primary member (this person's parent/primary) */}
+              {/* Primary member */}
               {customer.primaryMember && (
                 <TouchableOpacity
                   className="flex-row items-center bg-card border border-border rounded-xl px-4 py-3 mb-2"
@@ -372,7 +395,7 @@ export function CustomerDetailsScreen({ route, navigation }: CustomerDetailsScre
                   </View>
                 </TouchableOpacity>
               )}
-              {/* Family members under this person */}
+              {/* Family members */}
               {customer.familyMembers?.map((member: any) => (
                 <TouchableOpacity
                   key={member.id}
@@ -400,179 +423,176 @@ export function CustomerDetailsScreen({ route, navigation }: CustomerDetailsScre
           </View>
         )}
 
-        {/* ── Tabs ── */}
-        <View className="flex-row bg-card border border-border rounded-xl overflow-hidden mb-4">
-          {([
-            { key: 'timeline', label: 'Timeline', icon: 'time-outline', count: timeline.length },
-            { key: 'prescriptions', label: 'Rx', icon: 'eye-outline', count: prescriptions.length },
-            { key: 'orders', label: 'Orders', icon: 'receipt-outline', count: orders.length },
-          ] as const).map((tab) => {
-            const active = activeTab === tab.key;
-            return (
-              <TouchableOpacity
-                key={tab.key}
-                className="flex-1 items-center py-3"
-                style={{ backgroundColor: active ? '#06b6d415' : 'transparent' }}
-                onPress={() => setActiveTab(tab.key)}
-              >
-                <Ionicons name={tab.icon} size={15} color={active ? '#06b6d4' : '#6b7280'} />
-                <Text className="text-[10px] font-bold mt-1" style={{ color: active ? '#06b6d4' : '#6b7280' }}>
-                  {tab.label}
-                </Text>
-                {tab.count > 0 && (
-                  <View
-                    className="absolute top-1 right-4 w-4 h-4 rounded-full items-center justify-center"
-                    style={{ backgroundColor: active ? '#06b6d4' : '#374151' }}
-                  >
-                    <Text className="text-[9px] font-bold text-text">{tab.count}</Text>
-                  </View>
-                )}
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-
-        {/* ── Tab Contents ── */}
-        {activeTab === 'timeline' && (
-          <View>
-            <View className="flex-row justify-between items-center mb-4">
-              <Text className="text-text font-bold text-sm">Visit History</Text>
-              <TouchableOpacity
-                onPress={() => navigation.navigate('AddPrescription', { customerId })}
-                className="bg-[#06b6d4]/10 border border-[#06b6d4]/30 px-3 py-1.5 rounded-lg flex-row items-center"
-              >
-                <Ionicons name="add" size={14} color="#06b6d4" />
-                <Text className="text-[#06b6d4] text-xs font-semibold ml-1">New Rx</Text>
-              </TouchableOpacity>
-            </View>
-            {timeline.length === 0 ? (
-              <View className="bg-card border border-border rounded-xl p-10 items-center">
-                <Ionicons name="time-outline" size={32} color="#374151" />
-                <Text className="text-textMuted text-sm mt-3">No visits recorded yet.</Text>
-              </View>
-            ) : (
-              timeline.map((item) => (
-                <TimelineCard
-                  key={`${item.kind}-${item.id}`}
-                  item={item}
-                  onPress={() => {
-                    if (item.kind === 'prescription') {
-                      navigation.navigate('PrescriptionDetails', { prescriptionId: item.id });
-                    } else {
-                      navigation.navigate('OrderDetails', { orderId: item.id });
-                    }
-                  }}
-                />
-              ))
-            )}
+        {/* ── Visits & Timeline Cockpit ── */}
+        <View className="mb-4">
+          <View className="flex-row justify-between items-center mb-4">
+            <Text className="text-text font-extrabold text-base">Visits & History</Text>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('NewVisit', { customerId, customerName: customer.fullName })}
+              className="bg-[#06b6d4] px-4 py-2.5 rounded-xl flex-row items-center"
+            >
+              <Ionicons name="add-circle" size={16} color="#fff" style={{ marginRight: 6 }} />
+              <Text className="text-white text-xs font-bold">New Visit</Text>
+            </TouchableOpacity>
           </View>
-        )}
 
-        {activeTab === 'prescriptions' && (
-          <View>
-            <View className="flex-row justify-between items-center mb-4">
-              <Text className="text-text font-bold text-sm">Prescription History</Text>
-              <TouchableOpacity
-                onPress={() => navigation.navigate('AddPrescription', { customerId })}
-                className="bg-border px-3 py-1.5 rounded-lg border border-border flex-row items-center"
-              >
-                <Ionicons name="add" size={14} color="#ffffff" />
-                <Text className="text-text text-xs font-semibold ml-1">Add New</Text>
-              </TouchableOpacity>
+          {isVisitsLoading ? (
+            <ActivityIndicator size="large" color="#06b6d4" style={{ marginVertical: 30 }} />
+          ) : !visitsData || visitsData.length === 0 ? (
+            <View className="bg-card border border-border rounded-2xl p-10 items-center">
+              <Ionicons name="calendar-outline" size={36} color="#374151" />
+              <Text className="text-textMuted text-sm mt-3 text-center">
+                No visits recorded yet. Tap "New Visit" to log an encounter.
+              </Text>
             </View>
-            {prescriptions.length === 0 ? (
-              <View className="bg-card border border-border rounded-xl p-10 items-center">
-                <Ionicons name="eye-off-outline" size={32} color="#374151" />
-                <Text className="text-textMuted text-sm mt-3">No prescriptions yet.</Text>
-              </View>
-            ) : (
-              prescriptions.map((presc: any) => (
-                <TouchableOpacity
-                  key={presc.id}
-                  className="bg-card border border-border rounded-xl p-4 mb-3"
-                  onPress={() => navigation.navigate('PrescriptionDetails', { prescriptionId: presc.id })}
-                >
-                  <View className="flex-row justify-between items-center pb-2 border-b border-border mb-2.5">
-                    <View className="flex-row items-center">
-                      <Ionicons name="calendar-outline" size={12} color="#10b981" />
-                      <Text className="text-textSecondary text-xs font-medium ml-1.5">
-                        {new Date(presc.prescriptionDate).toLocaleDateString()}
-                      </Text>
-                    </View>
-                    {presc.doctorName ? (
-                      <View className="flex-row items-center">
-                        <Ionicons name="medical-outline" size={11} color="#a78bfa" />
-                        <Text className="text-textSecondary text-xs font-semibold ml-1">Dr. {presc.doctorName}</Text>
+          ) : (
+            visitsData.map((visit: any) => {
+              const visitDate = new Date(visit.date || visit.createdAt).toLocaleDateString('en-IN', {
+                day: 'numeric', month: 'short', year: 'numeric'
+              });
+              
+              return (
+                <View key={visit.id} className="bg-card border border-border rounded-2xl p-4 mb-4">
+                  {/* Visit Card Header */}
+                  <View className="flex-row justify-between items-start border-b border-border pb-3 mb-3">
+                    <View>
+                      <View className="flex-row items-center" style={{ gap: 8 }}>
+                        <View className="bg-[#06b6d4]/10 border border-[#06b6d4]/30 px-2 py-0.5 rounded-md">
+                          <Text className="text-[#06b6d4] text-[10px] font-extrabold uppercase">{visit.type}</Text>
+                        </View>
+                        <Text className="text-textMuted text-[10px] font-semibold">{visitDate}</Text>
                       </View>
-                    ) : null}
-                  </View>
-                  <View className="flex-row justify-between">
-                    <View className="w-[48%]">
-                      <Text className="text-textMuted text-[10px] font-bold uppercase mb-0.5">Right Eye (OD)</Text>
-                      <Text className="text-text text-xs font-mono">
-                        Sph: {presc.rightSphere ?? '0.00'} | Cyl: {presc.rightCylinder ?? '0.00'}
-                      </Text>
+                      {visit.doctorName && (
+                        <Text className="text-textSecondary text-[11px] mt-1">
+                          Handled by: <Text className="text-text font-bold">{visit.doctorName}</Text>
+                        </Text>
+                      )}
                     </View>
-                    <View className="w-[48%]">
-                      <Text className="text-textMuted text-[10px] font-bold uppercase mb-0.5">Left Eye (OS)</Text>
-                      <Text className="text-text text-xs font-mono">
-                        Sph: {presc.leftSphere ?? '0.00'} | Cyl: {presc.leftCylinder ?? '0.00'}
-                      </Text>
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              ))
-            )}
-          </View>
-        )}
 
-        {activeTab === 'orders' && (
-          <View>
-            <View className="flex-row justify-between items-center mb-4">
-              <Text className="text-text font-bold text-sm">Order History</Text>
-              <TouchableOpacity
-                onPress={() => navigation.navigate('AddOrder', { customerId })}
-                className="bg-border px-3 py-1.5 rounded-lg border border-border flex-row items-center"
-              >
-                <Ionicons name="add" size={14} color="#ffffff" />
-                <Text className="text-text text-xs font-semibold ml-1">New Order</Text>
-              </TouchableOpacity>
-            </View>
-            {orders.length === 0 ? (
-              <View className="bg-card border border-border rounded-xl p-10 items-center">
-                <Ionicons name="receipt-outline" size={32} color="#374151" />
-                <Text className="text-textMuted text-sm mt-3">No orders placed yet.</Text>
-              </View>
-            ) : (
-              orders.map((order: any) => (
-                <TouchableOpacity
-                  key={order.id}
-                  className="bg-card border border-border rounded-xl p-4 mb-3 flex-row justify-between items-center"
-                  onPress={() => navigation.navigate('OrderDetails', { orderId: order.id })}
-                >
-                  <View>
-                    <View className="flex-row items-center">
-                      <Text className="text-text font-bold text-sm">{order.orderNumber}</Text>
-                      <StatusBadge status={order.status} className="ml-2" />
-                    </View>
-                    <View className="flex-row items-center mt-1.5">
-                      <Ionicons name="calendar-outline" size={11} color="#71717a" />
-                      <Text className="text-textSecondary text-xs ml-1.5">
-                        {new Date(order.createdAt).toLocaleDateString()}
-                      </Text>
-                    </View>
+                    <TouchableOpacity onPress={() => handleConfirmDeleteVisit(visit.id)}>
+                      <Ionicons name="trash-outline" size={15} color="#ef4444" />
+                    </TouchableOpacity>
                   </View>
-                  <View className="items-end">
-                    <Text className="text-text font-bold text-sm">₹{order.total.toLocaleString()}</Text>
-                    <Text className="text-textMuted text-[10px] mt-1.5">
-                      Paid ₹{order.paidAmount.toLocaleString()}
+
+                  {/* Visit Notes */}
+                  {visit.notes && (
+                    <Text className="text-textMuted text-xs italic mb-3 bg-[#0f1623] p-2.5 rounded-lg">
+                      "{visit.notes}"
                     </Text>
-                  </View>
-                </TouchableOpacity>
-              ))
-            )}
-          </View>
-        )}
+                  )}
+
+                  {/* Prescriptions */}
+                  {visit.prescriptions?.map((rx: any) => (
+                    <View key={rx.id} className="bg-[#0f1623] border border-border rounded-xl p-3 mb-3">
+                      <View className="flex-row items-center mb-2 pb-1.5 border-b border-border" style={{ gap: 8 }}>
+                        <Ionicons name="eye-outline" size={13} color="#06b6d4" />
+                        <Text className="text-[#06b6d4] text-[11px] font-bold uppercase tracking-wider">Refraction Findings</Text>
+                      </View>
+
+                      {/* OD/OS values */}
+                      <View className="flex-row justify-between mb-2">
+                        <View className="flex-1">
+                          <Text className="text-[10px] text-textMuted uppercase font-bold">Right Eye (OD)</Text>
+                          <Text className="text-text text-xs mt-0.5">
+                            Sph: {rx.rightSphere ?? '0.00'} | Cyl: {rx.rightCylinder ?? '0.00'} | Axis: {rx.rightAxis ?? '0'}°
+                          </Text>
+                        </View>
+                        <View className="flex-1 border-l border-border pl-3">
+                          <Text className="text-[10px] text-textMuted uppercase font-bold">Left Eye (OS)</Text>
+                          <Text className="text-text text-xs mt-0.5">
+                            Sph: {rx.leftSphere ?? '0.00'} | Cyl: {rx.leftCylinder ?? '0.00'} | Axis: {rx.leftAxis ?? '0'}°
+                          </Text>
+                        </View>
+                      </View>
+
+                      {rx.pupillaryDistance && (
+                        <Text className="text-textSecondary text-[11px] mt-1">
+                          Pupillary Distance (PD): <Text className="text-text font-bold">{rx.pupillaryDistance} mm</Text>
+                        </Text>
+                      )}
+                      {rx.notes && (
+                        <Text className="text-textMuted text-[11px] italic mt-1">
+                          Rx Notes: "{rx.notes}"
+                        </Text>
+                      )}
+                    </View>
+                  ))}
+
+                  {/* Orders / Invoices */}
+                  {visit.orders?.map((order: any) => (
+                    <View key={order.id} className="bg-[#0f1623] border border-border rounded-xl p-3 mb-3">
+                      <View className="flex-row justify-between items-center mb-2 pb-1.5 border-b border-border">
+                        <View className="flex-row items-center" style={{ gap: 8 }}>
+                          <Ionicons name="cart-outline" size={13} color="#a78bfa" />
+                          <Text className="text-[#a78bfa] text-[11px] font-bold uppercase tracking-wider">Specs Order</Text>
+                        </View>
+                        <View className="bg-[#a78bfa]/10 px-2 py-0.5 rounded-md">
+                          <Text className="text-[#a78bfa] text-[9px] font-bold">{order.status}</Text>
+                        </View>
+                      </View>
+
+                      {/* Product details */}
+                      <Text className="text-text font-bold text-xs">
+                        {order.frameBrand || ''} {order.frameModel || ''} {order.frameName || 'Custom Spectacles'}
+                      </Text>
+                      {(order.lensType || order.lensCoating) && (
+                        <Text className="text-textSecondary text-[11px] mt-0.5">
+                          Lenses: {order.lensType || 'Standard'} ({order.lensCoating || 'Uncoated'})
+                        </Text>
+                      )}
+
+                      {/* Delivery Date */}
+                      {order.expectedDeliveryDate && (
+                        <Text className="text-textMuted text-[10px] mt-1.5">
+                          Expected Delivery: {new Date(order.expectedDeliveryDate).toLocaleDateString()}
+                        </Text>
+                      )}
+
+                      {/* Pricing */}
+                      <View className="flex-row justify-between items-center mt-3 pt-2 border-t border-borderLight">
+                        <View>
+                          <Text className="text-[9px] text-textMuted uppercase font-bold">Total Cost</Text>
+                          <Text className="text-text font-bold text-xs mt-0.5">₹{order.total.toLocaleString()}</Text>
+                        </View>
+                        <View className="items-end">
+                          <Text className="text-[9px] text-textMuted uppercase font-bold">Dues Outstanding</Text>
+                          <Text className="text-xs font-bold mt-0.5" style={{ color: order.balanceAmount > 0 ? '#ef4444' : '#10b981' }}>
+                            ₹{order.balanceAmount.toLocaleString()}
+                          </Text>
+                        </View>
+                      </View>
+                    </View>
+                  ))}
+
+                  {/* Transactions logged in visit */}
+                  {visit.transactions && visit.transactions.length > 0 && (
+                    <View className="mt-1">
+                      <Text className="text-[10px] text-textMuted uppercase font-bold mb-1.5">Transactions In Visit</Text>
+                      {visit.transactions.map((tx: any) => {
+                        const isDebit = tx.debit > 0;
+                        return (
+                          <View key={tx.id} className="flex-row justify-between items-center py-1">
+                            <View className="flex-row items-center" style={{ gap: 6 }}>
+                              <Ionicons
+                                name={isDebit ? 'arrow-up-circle' : 'arrow-down-circle'}
+                                size={12}
+                                color={isDebit ? '#ef4444' : '#10b981'}
+                              />
+                              <Text className="text-textSecondary text-[11px]">{tx.type.replace(/_/g, ' ')}</Text>
+                            </View>
+                            <Text className="text-xs font-bold" style={{ color: isDebit ? '#ef4444' : '#10b981' }}>
+                              {isDebit ? `+₹${tx.debit.toLocaleString()}` : `-₹${tx.credit.toLocaleString()}`}
+                            </Text>
+                          </View>
+                        );
+                      })}
+                    </View>
+                  )}
+                </View>
+              );
+            })
+          )}
+        </View>
       </ScrollView>
     </View>
   );

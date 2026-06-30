@@ -548,6 +548,155 @@ export class PdfService {
   }
 
   /**
+   * Generates a PDF Ledger statement for a customer.
+   */
+  static async generateLedgerPdf(customerSummary: any, transactions: any[], settings: any): Promise<string> {
+    const clinicName = settings?.workspace?.name || 'OptiFlow Clinic';
+    const email = settings?.clinicEmail || 'N/A';
+    const phone = settings?.clinicPhone || 'N/A';
+    const website = settings?.clinicWebsite || 'N/A';
+
+    const dateStr = new Date().toLocaleDateString('en-IN');
+    const totalPurchase = customerSummary.totalPurchase || 0;
+    const totalPaid = customerSummary.totalPaid || 0;
+    const totalDue = customerSummary.totalDue || 0;
+    const lastPaymentDateStr = customerSummary.lastPaymentDate
+      ? new Date(customerSummary.lastPaymentDate).toLocaleDateString('en-IN')
+      : 'N/A';
+
+    const transactionRows = transactions.map((tx) => {
+      const txDate = new Date(tx.createdAt).toLocaleDateString('en-IN', {
+        day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+      });
+      const formatType = tx.type.replace(/_/g, ' ');
+      const debitStr = tx.debit > 0 ? `₹${tx.debit.toLocaleString('en-IN')}` : '—';
+      const creditStr = tx.credit > 0 ? `₹${tx.credit.toLocaleString('en-IN')}` : '—';
+      const isDebit = tx.debit > 0;
+      const typeStyle = isDebit ? 'color: #ef4444; font-weight: 600;' : 'color: #10b981; font-weight: 600;';
+
+      return `
+        <tr>
+          <td style="font-size: 11px; white-space: nowrap;">${txDate}</td>
+          <td style="font-size: 11px; text-transform: capitalize; ${typeStyle}">${formatType.toLowerCase()}</td>
+          <td style="font-size: 11px;">${tx.notes || '—'}</td>
+          <td style="font-size: 11px; font-family: monospace;">${tx.referenceId || '—'}</td>
+          <td style="font-size: 11px; text-align: right; color: #ef4444;">${debitStr}</td>
+          <td style="font-size: 11px; text-align: right; color: #10b981;">${creditStr}</td>
+          <td style="font-size: 11px; text-align: right; font-weight: bold;">₹${tx.balance.toLocaleString('en-IN')}</td>
+        </tr>
+      `;
+    }).join('');
+
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <style>
+          body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333; margin: 30px; line-height: 1.4; }
+          .header { display: flex; justify-content: space-between; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; margin-bottom: 20px; }
+          .clinic-info h1 { margin: 0 0 5px 0; font-size: 22px; color: #0f172a; }
+          .clinic-info p { margin: 2px 0; font-size: 11px; color: #64748b; }
+          .report-title { text-align: right; }
+          .report-title h2 { margin: 0 0 5px 0; font-size: 18px; color: #0891b2; }
+          .report-title p { margin: 2px 0; font-size: 11px; color: #64748b; }
+          .customer-section { display: flex; justify-content: space-between; margin-bottom: 20px; gap: 15px; }
+          .box { flex: 1; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; }
+          .box h3 { margin: 0 0 8px 0; font-size: 11px; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px; }
+          .box p { margin: 4px 0; font-size: 12px; }
+          .box strong { color: #0f172a; }
+          .stats-grid { display: flex; gap: 10px; margin-bottom: 20px; justify-content: space-between; }
+          .stat-card { flex: 1; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; text-align: center; }
+          .stat-card .label { font-size: 9px; text-transform: uppercase; color: #64748b; font-weight: bold; }
+          .stat-card .val { font-size: 14px; font-weight: bold; margin-top: 4px; color: #0f172a; }
+          .stat-card.due { border-color: #ef444440; background: #ef444405; }
+          .stat-card.due .val { color: #ef4444; }
+          table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+          th { background: #f1f5f9; text-align: left; padding: 8px; font-size: 10px; text-transform: uppercase; color: #475569; font-weight: bold; border-bottom: 2px solid #cbd5e1; }
+          td { padding: 8px; font-size: 12px; border-bottom: 1px solid #e2e8f0; color: #334155; }
+          .footer { text-align: center; margin-top: 50px; font-size: 10px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <div class="clinic-info">
+            <h1>${clinicName}</h1>
+            <p>📧 ${email} | 📞 ${phone}</p>
+            <p>🌐 ${website}</p>
+          </div>
+          <div class="report-title">
+            <h2>Ledger Statement</h2>
+            <p><strong>Date Generated:</strong> ${dateStr}</p>
+          </div>
+        </div>
+
+        <div class="customer-section">
+          <div class="box">
+            <h3>Customer Details</h3>
+            <p><strong>Patient Name:</strong> ${customerSummary.customerName}</p>
+            <p><strong>Phone:</strong> ${customerSummary.phone}</p>
+          </div>
+          <div class="box">
+            <h3>Ledger Summary</h3>
+            <p><strong>Total Orders:</strong> ${customerSummary.totalOrders}</p>
+            <p><strong>Last Payment Date:</strong> ${lastPaymentDateStr}</p>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="label">Total Billed</div>
+            <div class="val">₹${totalPurchase.toLocaleString('en-IN')}</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Total Paid</div>
+            <div class="val">₹${totalPaid.toLocaleString('en-IN')}</div>
+          </div>
+          <div class="stat-card due">
+            <div class="label">Current Due</div>
+            <div class="val">₹${totalDue.toLocaleString('en-IN')}</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Avg Purchase</div>
+            <div class="val">₹${Math.round(customerSummary.averagePurchase || 0).toLocaleString('en-IN')}</div>
+          </div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Date & Time</th>
+              <th>Transaction Type</th>
+              <th>Description</th>
+              <th>Ref #</th>
+              <th style="text-align: right;">Debit</th>
+              <th style="text-align: right;">Credit</th>
+              <th style="text-align: right;">Balance</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${transactionRows}
+          </tbody>
+        </table>
+
+        <div class="footer">
+          <p>This is a computer-generated ledger statement for ${customerSummary.customerName}.</p>
+          <p>Thank you for your business! OptiFlow SaaS platform.</p>
+        </div>
+      </body>
+      </html>
+    `;
+
+    try {
+      const { uri } = await Print.printToFileAsync({ html: htmlContent });
+      return uri;
+    } catch (err) {
+      console.error('Error generating Ledger PDF:', err);
+      throw new Error('Ledger PDF Generation Failed');
+    }
+  }
+
+  /**
    * Opens native system sharing interface.
    * Converts PDF to image first to allow sharing as an image on messengers like WhatsApp,
    * with a fallback to raw PDF sharing.

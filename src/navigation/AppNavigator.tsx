@@ -23,6 +23,9 @@ import { BarcodeScannerScreen } from '../features/scanner/BarcodeScannerScreen';
 import { ExpensesScreen } from '../features/dashboard/Settings/ExpensesScreen';
 import { SuppliersScreen } from '../features/dashboard/Settings/SuppliersScreen';
 import { ReceiptPadScreen } from '../features/receipts/ReceiptPadScreen';
+import { LedgerScreen } from '../features/ledger/LedgerScreen';
+import { AddEditPaymentScreen } from '../features/ledger/AddEditPaymentScreen';
+import { NewVisitWizardScreen } from '../features/visits/NewVisitWizardScreen';
 import { AppTabs } from './AppTabs';
 
 const Stack = createNativeStackNavigator();
@@ -69,6 +72,9 @@ export function AppNavigator() {
           <Stack.Screen name="AppointmentDetails" component={AppointmentDetailsScreen} />
           <Stack.Screen name="AddEditAppointment" component={AddEditAppointmentScreen} />
           <Stack.Screen name="ReceiptPad" component={ReceiptPadScreen} />
+          <Stack.Screen name="Ledger" component={LedgerScreen} />
+          <Stack.Screen name="AddEditPayment" component={AddEditPaymentScreen} />
+          <Stack.Screen name="NewVisit" component={NewVisitWizardScreen} />
         </>
       ) : (
         <>

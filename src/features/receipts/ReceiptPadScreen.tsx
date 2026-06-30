@@ -559,9 +559,13 @@ export function ReceiptPadScreen({ route, navigation }: any) {
       await Print.printAsync({ uri });
       Toast.show({ type: 'success', text1: 'Printed Successfully', text2: 'Receipt sent to printer.' });
       await incrementAndSaveReceiptNo();
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      Toast.show({ type: 'error', text1: 'Print Failed', text2: 'Could not send document to printer.' });
+      if (err.message && err.message.includes('complete')) {
+        console.log('Printing cancelled or incomplete');
+      } else {
+        Toast.show({ type: 'error', text1: 'Print Failed', text2: 'Could not send document to printer.' });
+      }
     } finally {
       setPrinting(false);
     }

@@ -37,4 +37,26 @@ export const ENDPOINTS = {
     delete: (id: string) => `/appointments/${id}`,
     forCustomer: (customerId: string) => `/customers/${customerId}/appointments`,
   },
+  ledger: {
+    list: '/ledger',
+    details: (customerId: string) => `/ledger/${customerId}`,
+    addPayment: '/ledger/payment',
+    addAdjustment: '/ledger/adjustment',
+    updateTransaction: (transactionId: string) => `/ledger/${transactionId}`,
+    deleteTransaction: (transactionId: string) => `/ledger/${transactionId}`,
+    report: '/ledger/report',
+  },
+  calendar: {
+    events: '/calendar/events',
+    summary: '/calendar/summary',
+    createReminder: '/calendar/reminders',
+    deleteReminder: (id: string) => `/calendar/reminders/${id}`,
+    createStaffSchedule: '/calendar/staff-schedule',
+    deleteStaffSchedule: (id: string) => `/calendar/staff-schedule/${id}`,
+  },
+  visits: {
+    create: '/visits',
+    list: (customerId: string) => `/visits/customer/${customerId}`,
+    delete: (id: string) => `/visits/${id}`,
+  },
 } as const;

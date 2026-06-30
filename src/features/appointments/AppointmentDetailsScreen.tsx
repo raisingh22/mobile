@@ -10,21 +10,25 @@ import { colors } from '../../theme/colors';
 import { CommunicationService } from '../../services/CommunicationService';
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: any }> = {
-  SCHEDULED: { label: 'Scheduled', color: '#06b6d4', bg: '#06b6d418', icon: 'time-outline' },
-  CONFIRMED: { label: 'Confirmed', color: '#10b981', bg: '#10b98118', icon: 'checkmark-circle-outline' },
-  COMPLETED: { label: 'Completed', color: '#a1a1aa', bg: '#a1a1aa18', icon: 'checkmark-done-outline' },
-  CANCELLED: { label: 'Cancelled', color: '#ef4444', bg: '#ef444418', icon: 'close-circle-outline' },
-  NO_SHOW:   { label: 'No Show',   color: '#f97316', bg: '#f9731618', icon: 'alert-circle-outline' },
-  WALK_IN:   { label: 'Walk-in',   color: '#a78bfa', bg: '#a78bfa18', icon: 'walk-outline' },
+  SCHEDULED:   { label: 'Scheduled',   color: '#06b6d4', bg: '#06b6d418', icon: 'time-outline' },
+  CONFIRMED:   { label: 'Confirmed',   color: '#10b981', bg: '#10b98118', icon: 'checkmark-circle-outline' },
+  ARRIVED:     { label: 'Arrived',     color: '#059669', bg: '#05966918', icon: 'enter-outline' },
+  IN_PROGRESS: { label: 'In Progress', color: '#8b5cf6', bg: '#8b5cf618', icon: 'play-outline' },
+  COMPLETED:   { label: 'Completed',   color: '#a1a1aa', bg: '#a1a1aa18', icon: 'checkmark-done-outline' },
+  CANCELLED:   { label: 'Cancelled',   color: '#ef4444', bg: '#ef444418', icon: 'close-circle-outline' },
+  NO_SHOW:     { label: 'No Show',     color: '#f97316', bg: '#f9731618', icon: 'alert-circle-outline' },
+  WALK_IN:     { label: 'Walk-in',     color: '#a78bfa', bg: '#a78bfa18', icon: 'walk-outline' },
 };
 
 const TRANSITIONS: Record<string, string[]> = {
-  SCHEDULED: ['CONFIRMED', 'CANCELLED', 'NO_SHOW'],
-  CONFIRMED: ['COMPLETED', 'CANCELLED', 'NO_SHOW'],
-  WALK_IN:   ['COMPLETED', 'CANCELLED'],
-  COMPLETED: [],
-  CANCELLED: [],
-  NO_SHOW:   ['SCHEDULED'],
+  SCHEDULED:   ['CONFIRMED', 'ARRIVED', 'CANCELLED', 'NO_SHOW'],
+  CONFIRMED:   ['ARRIVED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED', 'NO_SHOW'],
+  ARRIVED:     ['IN_PROGRESS', 'COMPLETED', 'CANCELLED'],
+  IN_PROGRESS: ['COMPLETED', 'CANCELLED'],
+  WALK_IN:     ['ARRIVED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED'],
+  COMPLETED:   [],
+  CANCELLED:   [],
+  NO_SHOW:     ['SCHEDULED'],
 };
 
 function formatDateTime(iso: string) {
@@ -192,13 +196,19 @@ export function AppointmentDetailsScreen({ route, navigation }: AppointmentDetai
           {/* Details grid */}
           <View className="px-5 py-4 flex-row flex-wrap" style={{ gap: 16 }}>
             <View className="w-[45%]">
-              <Text className="text-textMuted text-[10px] font-bold uppercase tracking-wider">Type</Text>
+              <Text className="text-textMuted text-[10px] font-bold uppercase tracking-wider">Purpose / Type</Text>
               <Text className="text-text font-semibold text-sm mt-0.5">{appointment.type}</Text>
             </View>
             <View className="w-[45%]">
               <Text className="text-textMuted text-[10px] font-bold uppercase tracking-wider">Duration</Text>
               <Text className="text-text font-semibold text-sm mt-0.5">{appointment.durationMinutes} minutes</Text>
             </View>
+            {appointment.doctorName && (
+              <View className="w-[90%]">
+                <Text className="text-textMuted text-[10px] font-bold uppercase tracking-wider">Doctor / Optometrist</Text>
+                <Text className="text-text font-semibold text-sm mt-0.5">{appointment.doctorName}</Text>
+              </View>
+            )}
           </View>
 
           {appointment.notes && (

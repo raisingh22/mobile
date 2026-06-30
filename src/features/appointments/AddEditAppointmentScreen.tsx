@@ -42,7 +42,7 @@ interface AddEditAppointmentScreenProps {
 export function AddEditAppointmentScreen({ route, navigation }: AddEditAppointmentScreenProps) {
   const colors = useThemeColors();
   const insets = useSafeAreaInsets();
-  const { appointment, walkIn } = route.params ?? {};
+  const { appointment, walkIn, date: initialDate } = route.params ?? {};
   const isEdit = !!appointment;
   const queryClient = useQueryClient();
 
@@ -50,7 +50,7 @@ export function AddEditAppointmentScreen({ route, navigation }: AddEditAppointme
   const [selectedCustomerName, setSelectedCustomerName] = useState<string>(appointment?.customer?.fullName ?? '');
   const [selectedType, setSelectedType] = useState<string>(appointment?.type ?? (walkIn ? 'Walk-in' : 'Examination'));
   const [date, setDate] = useState<string>(
-    appointment?.scheduledAt ? appointment.scheduledAt.split('T')[0] : todayIso()
+    appointment?.scheduledAt ? appointment.scheduledAt.split('T')[0] : (initialDate ?? todayIso())
   );
   const [time, setTime] = useState<string>(
     appointment?.scheduledAt
@@ -58,6 +58,8 @@ export function AddEditAppointmentScreen({ route, navigation }: AddEditAppointme
       : nowTime()
   );
   const [duration, setDuration] = useState<number>(appointment?.durationMinutes ?? 30);
+  const [doctorName, setDoctorName] = useState<string>(appointment?.doctorName ?? '');
+  const [status, setStatus] = useState<any>(appointment?.status ?? 'SCHEDULED');
   const [notes, setNotes] = useState<string>(appointment?.notes ?? '');
   const [customerModalVisible, setCustomerModalVisible] = useState(false);
   const [customerSearch, setCustomerSearch] = useState('');
@@ -84,6 +86,8 @@ export function AddEditAppointmentScreen({ route, navigation }: AddEditAppointme
         scheduledAt,
         durationMinutes: duration,
         type: selectedType,
+        doctorName: doctorName.trim() || null,
+        status: isEdit ? status : undefined,
         notes: notes || undefined,
       };
       if (isEdit) {
@@ -93,6 +97,8 @@ export function AddEditAppointmentScreen({ route, navigation }: AddEditAppointme
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['appointments'] });
+      queryClient.invalidateQueries({ queryKey: ['calendar-events'] });
+      queryClient.invalidateQueries({ queryKey: ['calendar-summary'] });
       Toast.show({
         type: 'success',
         text1: isEdit ? 'Appointment Updated' : 'Appointment Booked',
@@ -293,6 +299,66 @@ export function AddEditAppointmentScreen({ route, navigation }: AddEditAppointme
             })}
           </View>
         </View>
+
+        {/* ── Doctor/Optometrist ── */}
+        <View className="bg-card border border-border rounded-2xl p-4 mb-4">
+          <View className="flex-row items-center mb-3">
+            <View className="w-7 h-7 rounded-full bg-[#3b82f6]/10 items-center justify-center mr-2">
+              <Ionicons name="person-add-outline" size={14} color="#3b82f6" />
+            </View>
+            <Text className="text-text font-bold text-sm">Doctor / Optometrist</Text>
+          </View>
+          <View className="bg-card border border-border rounded-xl px-3 py-2.5">
+            <TextInput
+              className="text-text text-sm"
+              placeholder="Enter doctor or optometrist name..."
+              placeholderTextColor={colors.textSecondary}
+              value={doctorName}
+              onChangeText={setDoctorName}
+            />
+          </View>
+        </View>
+
+        {/* ── Status selector (Edit mode only) ── */}
+        {isEdit && (
+          <View className="bg-card border border-border rounded-2xl p-4 mb-4">
+            <View className="flex-row items-center mb-3">
+              <View className="w-7 h-7 rounded-full bg-primary/10 items-center justify-center mr-2">
+                <Ionicons name="options-outline" size={14} color={colors.primary} />
+              </View>
+              <Text className="text-text font-bold text-sm">Status</Text>
+            </View>
+            <View className="flex-row flex-wrap" style={{ gap: 8 }}>
+              {['SCHEDULED', 'CONFIRMED', 'ARRIVED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED', 'NO_SHOW'].map((st) => {
+                const active = status === st;
+                const labelMap: Record<string, string> = {
+                  SCHEDULED: 'Scheduled',
+                  CONFIRMED: 'Confirmed',
+                  ARRIVED: 'Arrived',
+                  IN_PROGRESS: 'In Progress',
+                  COMPLETED: 'Completed',
+                  CANCELLED: 'Cancelled',
+                  NO_SHOW: 'No Show',
+                };
+                return (
+                  <TouchableOpacity
+                    key={st}
+                    onPress={() => setStatus(st as any)}
+                    className="px-3 py-2.5 rounded-xl border mb-1"
+                    style={{
+                      backgroundColor: active ? colors.primaryGlow : 'transparent',
+                      borderColor: active ? colors.primary : colors.border,
+                    }}
+                  >
+                    <Text className="text-xs font-semibold" style={{ color: active ? colors.primary : colors.textSecondary }}>
+                      {labelMap[st]}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </View>
+        )}
 
         <View className="bg-card border border-border rounded-2xl p-4 mb-4">
           <View className="flex-row items-center mb-3">

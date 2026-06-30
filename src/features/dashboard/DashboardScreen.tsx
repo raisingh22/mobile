@@ -272,6 +272,10 @@ export function DashboardScreen({ navigation }: DashboardScreenProps) {
               <View style={[s.revDot, { backgroundColor: '#06b6d4' }]} />
               <Text style={[s.revLabel, { color: '#06b6d4', fontWeight: 'bold' }]}>Net Profit: ₹{(stats.netProfit ?? 0).toLocaleString('en-IN')}</Text>
             </View>
+            <View style={s.revenueRow}>
+              <View style={[s.revDot, { backgroundColor: '#f43f5e' }]} />
+              <Text style={[s.revLabel, { color: '#f43f5e', fontWeight: 'bold' }]}>Outstanding Dues: ₹{(stats.totalOutstanding ?? 0).toLocaleString('en-IN')}</Text>
+            </View>
           </View>
           <View style={{ width: 88, height: 88, borderRadius: 44, backgroundColor: '#06b6d418', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: '#06b6d430' }}>
             <Ionicons name="wallet-outline" size={36} color="#06b6d4" />
@@ -316,9 +320,9 @@ export function DashboardScreen({ navigation }: DashboardScreenProps) {
           <Text style={[s.sectionTitle, { marginBottom: 12 }]}>Quick Actions</Text>
           <View style={s.quickGrid}>
             {[
-              { label: 'New Customer',     icon: 'person-add-outline', color: '#06b6d4', screen: 'AddEditCustomer', params: {} },
+              { label: 'New Cust',         icon: 'person-add-outline', color: '#06b6d4', screen: 'AddEditCustomer', params: {} },
               { label: 'New Order',        icon: 'cart-outline',        color: '#a78bfa', screen: 'AddOrder',        params: {} },
-              { label: 'Book Appt',        icon: 'calendar-outline',    color: '#10b981', screen: 'AddEditAppointment', params: {} },
+              { label: 'Ledger Dues',      icon: 'wallet-outline',      color: '#0891b2', screen: 'Ledger',          params: {} },
               { label: 'Receipt Pad',      icon: 'document-text-outline', color: '#f59e0b', screen: 'ReceiptPad',      params: {} },
             ].map((action) => (
               <TouchableOpacity
@@ -420,6 +424,49 @@ export function DashboardScreen({ navigation }: DashboardScreenProps) {
                       {formatDistanceToNow(new Date(order.createdAt), { addSuffix: true })}
                     </Text>
                   </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
+        </View>
+
+        {/* ── Top Debtors ── */}
+        <View style={s.section}>
+          <View style={s.sectionHeader}>
+            <Text style={s.sectionTitle}>Top Debtors (Dues Pending)</Text>
+            <TouchableOpacity onPress={() => navigation.navigate('Ledger')}>
+              <Text style={s.seeAll}>View all dues →</Text>
+            </TouchableOpacity>
+          </View>
+          {!dashboardData?.topDebtors || dashboardData.topDebtors.length === 0 ? (
+            <View style={[s.card, s.emptyState]}>
+              <Ionicons name="wallet-outline" size={28} color="#334155" />
+              <Text style={s.emptyText}>No pending customer dues</Text>
+            </View>
+          ) : (
+            <View style={s.card}>
+              {dashboardData.topDebtors.map((debtor: any, idx: number) => (
+                <TouchableOpacity
+                  key={debtor.id}
+                  style={[s.listRow, idx > 0 && s.listBorder]}
+                  onPress={() => navigation.navigate('CustomerDetails', { customerId: debtor.customerId })}
+                  activeOpacity={0.75}
+                >
+                  <View style={[s.custAvatar, { backgroundColor: colors.dangerGlow, borderColor: colors.danger + '30' }]}>
+                    <Text style={[s.custAvatarText, { color: colors.danger }]}>
+                      {debtor.customerName.split(' ').slice(0, 2).map((w: string) => w[0]).join('').toUpperCase()}
+                    </Text>
+                  </View>
+                  <View style={s.listContent}>
+                    <Text style={s.listName}>{debtor.customerName}</Text>
+                    <View style={s.infoRow}>
+                      <Ionicons name="call-outline" size={11} color="#64748b" />
+                      <Text style={s.infoText}>{debtor.phone}</Text>
+                    </View>
+                  </View>
+                  <Text style={[s.orderAmount, { color: colors.danger, fontWeight: '800' }]}>
+                    ₹{debtor.outstandingAmount.toLocaleString()}
+                  </Text>
                 </TouchableOpacity>
               ))}
             </View>
