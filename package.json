@@ -15,7 +15,9 @@
     "axios": "^1.18.1",
     "date-fns": "^4.4.0",
     "expo": "~56.0.12",
+    "expo-image-picker": "^56.0.18",
     "expo-local-authentication": "~56.0.4",
+    "expo-pdf-to-image": "^1.0.0",
     "expo-print": "~56.0.4",
     "expo-secure-store": "~56.0.4",
     "expo-sharing": "~56.0.18",
@@ -41,8 +43,21 @@
   "scripts": {
     "start": "expo start",
     "android": "expo run:android",
-    "ios": "expo run:ios",
-    "web": "expo start --web"
+    "ios": "LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 expo run:ios --device 00008110-000E116E1140A01E",
+    "web": "expo start --web",
+    "prebuild": "LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 npx expo prebuild",
+    "prebuild:clean": "LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 npx expo prebuild --clean",
+    "build:ios": "LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 npx expo run:ios --device 00008110-000E116E1140A01E",
+    "build:ios:release": "LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 npx expo run:ios --configuration Release",
+    "build:android": "npx expo run:android",
+    "build:android:release": "npx expo run:android --variant release",
+    "build:release": "npm run build:android:release && npm run build:ios:release",
+    "eas:build": "eas build",
+    "eas:build:local": "eas build --local",
+    "assemblerelease": "node scripts/build-release.js",
+    "bundlerelease": "cd android && ./gradlew bundleRelease && cd ..",
+    "pods": "cd ios && LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 pod install && cd ..",
+    "check": "npx tsc --noEmit"
   },
   "private": true
 }

@@ -8,7 +8,15 @@
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.raisingh229.mobile"
+      "bundleIdentifier": "com.raisingh229.mobile",
+      "infoPlist": {
+        "LSApplicationQueriesSchemes": [
+          "whatsapp"
+        ],
+        "NSCameraUsageDescription": "This app requires access to the camera to scan and auto-fill receipt/prescription pads using AI.",
+        "NSPhotoLibraryUsageDescription": "This app requires access to your photo library to select receipt/prescription images for AI auto-fill."
+      },
+      "buildNumber": "2"
     },
     "android": {
       "adaptiveIcon": {
@@ -18,14 +26,22 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.raisingh229.mobile"
+      "package": "com.raisingh229.mobile",
+      "versionCode": 2
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
       "expo-secure-store",
-      "expo-sharing"
+      "expo-sharing",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "This app requires access to your photos to select receipt and prescription images.",
+          "cameraPermission": "This app requires access to the camera to scan receipt and prescription pads using AI."
+        }
+      ]
     ]
   }
 }

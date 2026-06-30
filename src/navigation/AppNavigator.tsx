@@ -22,6 +22,7 @@ import { BackupRestoreScreen } from '../features/dashboard/Settings/BackupRestor
 import { BarcodeScannerScreen } from '../features/scanner/BarcodeScannerScreen';
 import { ExpensesScreen } from '../features/dashboard/Settings/ExpensesScreen';
 import { SuppliersScreen } from '../features/dashboard/Settings/SuppliersScreen';
+import { ReceiptPadScreen } from '../features/receipts/ReceiptPadScreen';
 import { AppTabs } from './AppTabs';
 
 const Stack = createNativeStackNavigator();
@@ -67,6 +68,7 @@ export function AppNavigator() {
           <Stack.Screen name="Suppliers" component={SuppliersScreen} />
           <Stack.Screen name="AppointmentDetails" component={AppointmentDetailsScreen} />
           <Stack.Screen name="AddEditAppointment" component={AddEditAppointmentScreen} />
+          <Stack.Screen name="ReceiptPad" component={ReceiptPadScreen} />
         </>
       ) : (
         <>

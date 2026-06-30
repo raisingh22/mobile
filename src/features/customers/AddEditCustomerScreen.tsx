@@ -244,15 +244,17 @@ export function AddEditCustomerScreen({ route, navigation }: AddEditCustomerScre
   });
   const allCustomers: any[] = allCustomersData?.data ?? [];
 
+  const prefill = route.params?.prefill;
+
   const { control, handleSubmit, formState: { errors } } = useForm<CustomerFormData>({
     resolver: zodResolver(customerSchema),
     defaultValues: {
-      fullName: customer?.fullName || '',
-      phone: customer?.phone || '',
+      fullName: customer?.fullName || prefill?.fullName || '',
+      phone: customer?.phone || prefill?.phone || '',
       email: customer?.email || '',
       dateOfBirth: customer?.dateOfBirth ? customer.dateOfBirth.split('T')[0] : '',
       gender: customer?.gender || '',
-      address: customer?.address || '',
+      address: customer?.address || prefill?.address || '',
       notes: customer?.notes || '',
     },
   });

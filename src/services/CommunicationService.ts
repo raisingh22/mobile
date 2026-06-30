@@ -9,20 +9,13 @@ export class CommunicationService {
    */
   static async sendWhatsApp(phone: string, text: string) {
     try {
-      // Clean phone number: keep only + and digits
-      const cleanedPhone = phone.replace(/[^\d+]/g, '');
-      const url = `whatsapp://send?phone=${cleanedPhone}&text=${encodeURIComponent(text)}`;
+      // Clean phone number: keep only digits (remove +, spaces, dashes, etc.)
+      const cleanedPhone = phone.replace(/\D/g, '');
       
-      const canOpen = await Linking.canOpenURL(url);
-      if (canOpen) {
-        await Linking.openURL(url);
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: 'WhatsApp Not Installed',
-          text2: 'Please install WhatsApp to send messages directly.',
-        });
-      }
+      // Use the universal WhatsApp link (wa.me) which does not require LSApplicationQueriesSchemes in Info.plist
+      const url = `https://wa.me/${cleanedPhone}?text=${encodeURIComponent(text)}`;
+      
+      await Linking.openURL(url);
     } catch (error) {
       console.error('Error opening WhatsApp:', error);
       Toast.show({ type: 'error', text1: 'Error', text2: 'Could not open WhatsApp' });

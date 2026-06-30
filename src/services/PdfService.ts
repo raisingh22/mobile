@@ -1,6 +1,7 @@
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import Toast from 'react-native-toast-message';
+import ExpoPdfToImage from 'expo-pdf-to-image';
 
 export class PdfService {
   /**
@@ -265,7 +266,291 @@ export class PdfService {
   }
 
   /**
+   * Generates a PDF optical receipt from the ReceiptPad data.
+   */
+  static async generateOpticalReceiptPdf(data: any): Promise<string> {
+    const receiptNo = data.receiptNo || '';
+    const date = data.date || '';
+    const customerName = data.customerName || '';
+    const customerAddress = data.customerAddress || '';
+    const customerMobile = data.customerMobile || '';
+
+    // We render exactly 5 rows in the table
+    const tableRows = Array.from({ length: 5 }).map((_, idx) => {
+      const item = data.items[idx] || { particulars: '', qty: '', rate: '', amount: '' };
+      return `
+        <tr class="item-row">
+          <td style="text-align: center; font-size: 11px; width: 10%; border-right: 1px solid #000; height: 26px;">${idx + 1}</td>
+          <td style="text-align: left; padding-left: 5px; font-size: 11px; width: 50%; border-right: 1px solid #000;">${item.particulars}</td>
+          <td style="text-align: center; font-size: 11px; width: 10%; border-right: 1px solid #000;">${item.qty}</td>
+          <td style="text-align: right; padding-right: 5px; font-size: 11px; width: 15%; border-right: 1px solid #000;">${item.rate ? '₹' + item.rate : ''}</td>
+          <td style="text-align: right; padding-right: 5px; font-weight: 500; font-size: 11px; width: 15%;">${item.amount ? '₹' + item.amount : ''}</td>
+        </tr>
+      `;
+    }).join('');
+
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;600;700&display=swap" rel="stylesheet">
+        <style>
+          @page {
+            size: A5;
+            margin: 0;
+          }
+          body {
+            font-family: 'Hind', sans-serif;
+            color: #000;
+            margin: 0;
+            padding: 10px;
+            box-sizing: border-box;
+            background-color: #fff;
+            width: 148mm;
+            height: 210mm;
+          }
+          .outer-border {
+            border: 1.5px solid #000;
+            width: 100%;
+            height: 100%;
+            padding: 12px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+          }
+          .header-title {
+            font-size: 20px;
+            font-weight: 700;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            letter-spacing: 0.5px;
+          }
+          .header-subtitle {
+            font-size: 10px;
+            text-align: center;
+            margin: 2px 0 10px 0;
+            font-weight: 600;
+          }
+          .meta-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            margin-bottom: 8px;
+            font-weight: 600;
+          }
+          .meta-row span.val {
+            border-bottom: 1px solid #000;
+            padding: 0 4px;
+            font-weight: 700;
+          }
+          .field-row {
+            display: flex;
+            align-items: flex-end;
+            font-size: 11px;
+            margin-bottom: 8px;
+            font-weight: 600;
+          }
+          .field-row span.lbl {
+            white-space: nowrap;
+          }
+          .field-row span.val-line {
+            flex: 1;
+            border-bottom: 1px dashed #000;
+            margin-left: 5px;
+            padding-left: 5px;
+            font-weight: 700;
+            min-height: 15px;
+          }
+          .billing-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1.5px solid #000;
+            margin-top: 5px;
+          }
+          .billing-table th {
+            border: 1px solid #000;
+            font-size: 9px;
+            font-weight: 700;
+            text-align: center;
+            background-color: #f2f2f2;
+            padding: 4px 2px;
+          }
+          .billing-table td {
+            padding: 0;
+          }
+          .item-row {
+            border-bottom: 1px solid #000;
+          }
+          .totals-row td {
+            border: 1px solid #000;
+            padding: 3px 6px;
+            font-size: 10px;
+            font-weight: 700;
+          }
+          .totals-lbl {
+            text-align: right;
+            background-color: #f9f9f9;
+          }
+          .footer-container {
+            display: flex;
+            margin-top: auto;
+            align-items: stretch;
+            padding-top: 10px;
+          }
+          .rx-table {
+            width: 70%;
+            border-collapse: collapse;
+            border: 1px solid #000;
+          }
+          .rx-table th {
+            border: 0.5px solid #000;
+            font-size: 8px;
+            font-weight: 700;
+            text-align: center;
+            padding: 2px;
+          }
+          .rx-table td {
+            border: 0.5px solid #000;
+            font-size: 9px;
+            text-align: center;
+            padding: 3px 2px;
+            height: 20px;
+          }
+          .rx-label {
+            font-size: 8px;
+            font-weight: 700;
+            background-color: #f9f9f9;
+            width: 12%;
+            line-height: 1.1;
+          }
+          .sig-box {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            font-weight: 700;
+            font-size: 11px;
+            padding-bottom: 5px;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="outer-border">
+          <div class="header-title">राज आई केयर एण्ड ऑप्टिकल्स</div>
+          <div class="header-subtitle">स्टेट बैंक के सामने, टपूकड़ा बाईपास, (राज.)</div>
+
+          <div class="meta-row">
+            <div>No. <span class="val" style="min-width: 60px; display: inline-block;">${receiptNo}</span></div>
+            <div>Date : <span class="val" style="min-width: 80px; display: inline-block; text-align: center;">${date}</span></div>
+          </div>
+
+          <div class="field-row">
+            <span class="lbl">Name</span>
+            <span class="val-line">${customerName}</span>
+          </div>
+
+          <div class="field-row">
+            <span class="lbl">Add. :</span>
+            <span class="val-line" style="flex: 2;">${customerAddress}</span>
+            <span class="lbl" style="margin-left: 10px;">Mob. :</span>
+            <span class="val-line" style="flex: 1;">${customerMobile}</span>
+          </div>
+
+          <table class="billing-table">
+            <thead>
+              <tr>
+                <th style="width: 10%;">S. No.</th>
+                <th style="width: 50%;">PARTICULARS</th>
+                <th style="width: 10%;">QTY.</th>
+                <th style="width: 15%;">RATE</th>
+                <th style="width: 15%;">AMOUNT</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${tableRows}
+              <tr class="totals-row">
+                <td colspan="4" class="totals-lbl">TOTAL</td>
+                <td style="text-align: right; padding-right: 5px;">${data.total ? '₹' + data.total : ''}</td>
+              </tr>
+              <tr class="totals-row">
+                <td colspan="4" class="totals-lbl">ADVANCE</td>
+                <td style="text-align: right; padding-right: 5px;">${data.advance ? '₹' + data.advance : ''}</td>
+              </tr>
+              <tr class="totals-row">
+                <td colspan="4" class="totals-lbl">BALANCE</td>
+                <td style="text-align: right; padding-right: 5px; font-weight: bold;">${data.balance ? '₹' + data.balance : ''}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="footer-container">
+            <table class="rx-table">
+              <thead>
+                <tr>
+                  <th rowspan="2" style="width: 12%;">Eye</th>
+                  <th colspan="3">RIGHT</th>
+                  <th colspan="3">LEFT</th>
+                </tr>
+                <tr>
+                  <th style="width: 14.6%;">SPH</th>
+                  <th style="width: 14.6%;">CYL</th>
+                  <th style="width: 14.6%;">AXIS</th>
+                  <th style="width: 14.6%;">SPH</th>
+                  <th style="width: 14.6%;">CYL</th>
+                  <th style="width: 14.6%;">AXIS</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="rx-label">DIST.</td>
+                  <td>${data.rxDistanceRight.sph}</td>
+                  <td>${data.rxDistanceRight.cyl}</td>
+                  <td>${data.rxDistanceRight.axis}</td>
+                  <td>${data.rxDistanceLeft.sph}</td>
+                  <td>${data.rxDistanceLeft.cyl}</td>
+                  <td>${data.rxDistanceLeft.axis}</td>
+                </tr>
+                <tr>
+                  <td class="rx-label">NEAR</td>
+                  <td>${data.rxReadingRight.sph}</td>
+                  <td>${data.rxReadingRight.cyl}</td>
+                  <td>${data.rxReadingRight.axis}</td>
+                  <td>${data.rxReadingLeft.sph}</td>
+                  <td>${data.rxReadingLeft.cyl}</td>
+                  <td>${data.rxReadingLeft.axis}</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="sig-box">
+              हस्ताक्षर
+            </div>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    try {
+      const { uri } = await Print.printToFileAsync({
+        html: htmlContent,
+        width: 420,
+        height: 595,
+      });
+      return uri;
+    } catch (err) {
+      console.error('Error generating Optical Receipt PDF:', err);
+      throw new Error('Optical Receipt Compilation Failed');
+    }
+  }
+
+  /**
    * Opens native system sharing interface.
+   * Converts PDF to image first to allow sharing as an image on messengers like WhatsApp,
+   * with a fallback to raw PDF sharing.
    */
   static async shareFile(uri: string, filename: string) {
     try {
@@ -278,6 +563,25 @@ export class PdfService {
         });
         return;
       }
+
+      try {
+        console.log('Attempting to convert PDF to image for sharing:', uri);
+        const imagePaths = await ExpoPdfToImage.convertPdfToImages(uri);
+        if (imagePaths && imagePaths.length > 0) {
+          const imageUri = imagePaths[0];
+          console.log('Successfully converted PDF to image for sharing:', imageUri);
+          await Sharing.shareAsync(imageUri, {
+            dialogTitle: `Share ${filename.replace('.pdf', '')}`,
+            mimeType: 'image/jpeg',
+            UTI: 'public.jpeg',
+          });
+          return;
+        }
+      } catch (conversionError) {
+        console.warn('PDF to Image conversion failed, falling back to PDF sharing:', conversionError);
+      }
+
+      // Fallback: share raw PDF file
       await Sharing.shareAsync(uri, {
         dialogTitle: `Share ${filename}`,
         mimeType: 'application/pdf',

@@ -319,7 +319,7 @@ export function DashboardScreen({ navigation }: DashboardScreenProps) {
               { label: 'New Customer',     icon: 'person-add-outline', color: '#06b6d4', screen: 'AddEditCustomer', params: {} },
               { label: 'New Order',        icon: 'cart-outline',        color: '#a78bfa', screen: 'AddOrder',        params: {} },
               { label: 'Book Appt',        icon: 'calendar-outline',    color: '#10b981', screen: 'AddEditAppointment', params: {} },
-              { label: 'Notifications',    icon: 'notifications-outline',color: '#f59e0b', screen: 'Notifications',  params: {} },
+              { label: 'Receipt Pad',      icon: 'document-text-outline', color: '#f59e0b', screen: 'ReceiptPad',      params: {} },
             ].map((action) => (
               <TouchableOpacity
                 key={action.label}

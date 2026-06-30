@@ -295,6 +295,12 @@ export function PrescriptionDetailsScreen({ route, navigation }: PrescriptionDet
         <View className="flex-row items-center">
           <TouchableOpacity
             className="w-9 h-9 rounded-full bg-border items-center justify-center mr-2"
+            onPress={() => navigation.navigate('ReceiptPad', { prescription })}
+          >
+            <Ionicons name="document-text-outline" size={19} color="#10b981" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            className="w-9 h-9 rounded-full bg-border items-center justify-center mr-2"
             onPress={handleSharePdf}
             disabled={generatingPdf}
           >
