@@ -70,41 +70,53 @@ export function NotificationsScreen({ navigation }: NotificationsScreenProps) {
     return true;
   });
 
-  const getNotificationEmoji = (type: string) => {
+  const getNotificationIcon = (type: string) => {
     switch (type) {
-      case 'NEW_ORDER': return '🆕';
-      case 'NEW_PRESCRIPTION': return '👓';
-      case 'ORDER_READY': return '📦';
-      case 'LOW_STOCK': return '⚠️';
-      case 'TODAY_APPOINTMENT': return '📅';
-      case 'PAYMENT_RECEIVED': return '💰';
-      case 'PENDING_ORDERS_OLD': return '⏰';
+      case 'NEW_ORDER':
+        return { name: 'cart-outline' as const, color: '#06b6d4', bg: 'bg-[#06b6d4]/10' };
+      case 'NEW_PRESCRIPTION':
+        return { name: 'eye-outline' as const, color: '#a78bfa', bg: 'bg-[#a78bfa]/10' };
+      case 'ORDER_READY':
+        return { name: 'cube-outline' as const, color: '#10b981', bg: 'bg-[#10b981]/10' };
+      case 'LOW_STOCK':
+        return { name: 'warning-outline' as const, color: '#f59e0b', bg: 'bg-[#f59e0b]/10' };
+      case 'TODAY_APPOINTMENT':
+        return { name: 'calendar-outline' as const, color: '#3b82f6', bg: 'bg-[#3b82f6]/10' };
+      case 'PAYMENT_RECEIVED':
+        return { name: 'cash-outline' as const, color: '#10b981', bg: 'bg-[#10b981]/10' };
+      case 'PENDING_ORDERS_OLD':
+        return { name: 'time-outline' as const, color: '#f43f5e', bg: 'bg-[#f43f5e]/10' };
       case 'CUSTOMER_BIRTHDAY':
-      case 'CUSTOMER_REVISIT': return '🎂';
-      default: return '🔔';
+      case 'CUSTOMER_REVISIT':
+        return { name: 'gift-outline' as const, color: '#ec4899', bg: 'bg-[#ec4899]/10' };
+      default:
+        return { name: 'notifications-outline' as const, color: '#9ca3af', bg: 'bg-[#9ca3af]/10' };
     }
   };
 
   const renderItem = ({ item }: { item: any }) => {
     const isUnread = !readIds.includes(item.id);
+    const iconConfig = getNotificationIcon(item.type);
 
     return (
       <TouchableOpacity
         className={`p-4 mb-3 border rounded-xl flex-row items-start ${
           isUnread
-            ? 'bg-[#18181b] border-l-4 border-l-[#6366f1] border-[#27272a]'
-            : 'bg-[#18181b]/60 border-[#27272a] opacity-60'
+            ? 'bg-card border-l-4 border-l-primary border-border'
+            : 'bg-card/60 border-border opacity-60'
         }`}
         onPress={() => handleNotificationTap(item)}
       >
-        <Text className="text-xl mr-3">{getNotificationEmoji(item.type)}</Text>
+        <View className={`w-9 h-9 rounded-full ${iconConfig.bg} items-center justify-center mr-3`}>
+          <Ionicons name={iconConfig.name} size={18} color={iconConfig.color} />
+        </View>
         <View className="flex-1">
           <View className="flex-row justify-between items-center">
-            <Text className="text-white font-bold text-sm flex-1">{item.title}</Text>
-            {isUnread && <View className="w-2.5 h-2.5 rounded-full bg-[#6366f1] ml-2" />}
+            <Text className="text-text font-bold text-sm flex-1">{item.title}</Text>
+            {isUnread && <View className="w-2.5 h-2.5 rounded-full bg-[#06b6d4] ml-2" />}
           </View>
-          <Text className="text-[#a1a1aa] text-xs mt-1 leading-4">{item.message}</Text>
-          <Text className="text-[#71717a] text-[10px] mt-2 font-medium">
+          <Text className="text-textSecondary text-xs mt-1 leading-4">{item.message}</Text>
+          <Text className="text-textMuted text-[10px] mt-2 font-medium">
             {formatDistanceToNow(new Date(item.createdAt), { addSuffix: true })}
           </Text>
         </View>
@@ -115,24 +127,24 @@ export function NotificationsScreen({ navigation }: NotificationsScreenProps) {
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
       {/* Header */}
-      <View className="bg-[#18181b] border-b border-[#27272a] px-6 pt-14 pb-4 flex-row justify-between items-center">
-        <Text className="text-white text-2xl font-bold">Alerts</Text>
+      <View className="bg-card border-b border-border px-6 pt-14 pb-4 flex-row justify-between items-center">
+        <Text className="text-text text-2xl font-bold">Alerts</Text>
         <TouchableOpacity
           onPress={handleMarkAllRead}
-          className="bg-[#27272a] px-3 py-1.5 rounded-lg border border-[#3f3f46]"
+          className="bg-border px-3 py-1.5 rounded-lg border border-border"
         >
-          <Text className="text-white text-xs font-semibold">Mark All Read</Text>
+          <Text className="text-text text-xs font-semibold">Mark All Read</Text>
         </TouchableOpacity>
       </View>
 
       {/* Filter Tabs */}
-      <View className="flex-row border-b border-[#27272a] px-4 pt-4">
+      <View className="flex-row border-b border-border px-4 pt-4">
         <TouchableOpacity
           className="flex-1 items-center pb-2.5"
           style={{ borderBottomWidth: filter === 'all' ? 2 : 0, borderBottomColor: colors.primary }}
           onPress={() => setFilter('all')}
         >
-          <Text className={`text-xs font-bold ${filter === 'all' ? 'text-[#6366f1]' : 'text-[#a1a1aa]'}`}>
+          <Text className={`text-xs font-bold ${filter === 'all' ? 'text-[#06b6d4]' : 'text-textSecondary'}`}>
             All Alerts ({notifications.length})
           </Text>
         </TouchableOpacity>
@@ -141,7 +153,7 @@ export function NotificationsScreen({ navigation }: NotificationsScreenProps) {
           style={{ borderBottomWidth: filter === 'unread' ? 2 : 0, borderBottomColor: colors.primary }}
           onPress={() => setFilter('unread')}
         >
-          <Text className={`text-xs font-bold ${filter === 'unread' ? 'text-[#6366f1]' : 'text-[#a1a1aa]'}`}>
+          <Text className={`text-xs font-bold ${filter === 'unread' ? 'text-[#06b6d4]' : 'text-textSecondary'}`}>
             Unread ({notifications.filter((n) => !readIds.includes(n.id)).length})
           </Text>
         </TouchableOpacity>
@@ -163,7 +175,7 @@ export function NotificationsScreen({ navigation }: NotificationsScreenProps) {
           }
           ListEmptyComponent={
             <View className="items-center py-12">
-              <Text className="text-[#71717a] text-sm">
+              <Text className="text-textMuted text-sm">
                 {filter === 'unread' ? 'No unread alerts left!' : 'No merchant alerts generated.'}
               </Text>
             </View>

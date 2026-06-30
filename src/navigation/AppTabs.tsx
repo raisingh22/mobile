@@ -1,87 +1,104 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
+import { View, Animated, StyleSheet, Dimensions } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import { useQuery } from '@tanstack/react-query';
-import { axiosClient } from '../api/axiosClient';
-import { ENDPOINTS } from '../api/endpoints';
-import { useNotificationStore } from '../store/notificationStore';
 import { DashboardScreen } from '../features/dashboard/DashboardScreen';
 import { CustomersScreen } from '../features/customers/CustomersScreen';
-import { PrescriptionsScreen } from '../features/prescriptions/PrescriptionsScreen';
 import { OrdersScreen } from '../features/orders/OrdersScreen';
-import { NotificationsScreen } from '../features/notifications/NotificationsScreen';
-import { colors } from '../theme/colors';
+import { AppointmentsScreen } from '../features/appointments/AppointmentsScreen';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useThemeColors } from '../theme/colors';
 
 const Tab = createBottomTabNavigator();
+const { width } = Dimensions.get('window');
+const TAB_WIDTH = width / 4;
+
+function TabBarIcon({ route, focused }: { route: any; focused: boolean }) {
+  const scaleAnim = useRef(new Animated.Value(focused ? 1 : 0)).current;
+  const colors = useThemeColors();
+
+  useEffect(() => {
+    Animated.spring(scaleAnim, {
+      toValue: focused ? 1 : 0,
+      useNativeDriver: true,
+      bounciness: 8,
+      speed: 12,
+    }).start();
+  }, [focused]);
+
+  let iconName: any = 'help-circle-outline';
+  if (route.name === 'Dashboard')    iconName = focused ? 'grid' : 'grid-outline';
+  if (route.name === 'Customers')    iconName = focused ? 'people' : 'people-outline';
+  if (route.name === 'Orders')       iconName = focused ? 'cube' : 'cube-outline';
+  if (route.name === 'Appointments') iconName = focused ? 'calendar' : 'calendar-outline';
+
+  const color = focused ? colors.primary : colors.textSecondary;
+
+  return (
+    <View style={styles.iconContainer}>
+      <Animated.View
+        style={[
+          styles.pillIndicator,
+          {
+            backgroundColor: colors.primaryGlow,
+            transform: [{ scale: scaleAnim }],
+            opacity: scaleAnim.interpolate({ inputRange: [0, 1], outputRange: [0, 1] }),
+          },
+        ]}
+      />
+      <Ionicons name={iconName} size={22} color={color} style={{ zIndex: 2 }} />
+    </View>
+  );
+}
 
 export function AppTabs() {
-  const { readIds } = useNotificationStore();
-
-  const { data: notifications = [] } = useQuery<any[]>({
-    queryKey: ['notifications'],
-    queryFn: async () => {
-      const response = await axiosClient.get(ENDPOINTS.notifications);
-      return response.data;
-    },
-    refetchInterval: 30000, // Background poll every 30s
-  });
-
-  const unreadCount = notifications.filter((n) => !readIds.includes(n.id)).length;
+  const colors = useThemeColors();
+  const insets = useSafeAreaInsets();
 
   return (
     <Tab.Navigator
-      screenOptions={({ route }) => ({
+      screenOptions={({ route }: any) => ({
         headerShown: false,
-        tabBarStyle: {
-          backgroundColor: '#18181b',
-          borderTopColor: '#27272a',
-          paddingBottom: 8,
-          paddingTop: 8,
-          height: 60,
-        },
+        tabBarIcon: ({ focused }: any) => <TabBarIcon route={route} focused={focused} />,
         tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: '#71717a',
-        tabBarLabelStyle: {
-          fontSize: 11,
-          fontWeight: '500',
+        tabBarInactiveTintColor: colors.textSecondary,
+        tabBarStyle: {
+          backgroundColor: colors.card,
+          borderTopWidth: 1,
+          borderTopColor: colors.border,
+          height: 60 + insets.bottom,
+          paddingTop: 8,
+          paddingBottom: insets.bottom > 0 ? insets.bottom : 8,
+          elevation: 0,
         },
-        tabBarIcon: ({ color, size }) => {
-          let iconName: keyof typeof Ionicons.glyphMap = 'cube';
-
-          if (route.name === 'Dashboard') {
-            iconName = 'grid-outline';
-          } else if (route.name === 'Customers') {
-            iconName = 'people-outline';
-          } else if (route.name === 'Prescriptions') {
-            iconName = 'document-text-outline';
-          } else if (route.name === 'Orders') {
-            iconName = 'cart-outline';
-          } else if (route.name === 'Notifications') {
-            iconName = 'notifications-outline';
-          }
-
-          return <Ionicons name={iconName} size={size} color={color} />;
+        tabBarLabelStyle: {
+          fontSize: 10,
+          fontWeight: '700',
+          marginTop: 4,
+          letterSpacing: 0.3,
         },
       })}
     >
       <Tab.Screen name="Dashboard" component={DashboardScreen} />
       <Tab.Screen name="Customers" component={CustomersScreen} />
-      <Tab.Screen name="Prescriptions" component={PrescriptionsScreen} />
       <Tab.Screen name="Orders" component={OrdersScreen} />
-      <Tab.Screen
-        name="Notifications"
-        component={NotificationsScreen}
-        options={{
-          tabBarBadge: unreadCount > 0 ? unreadCount : undefined,
-          tabBarBadgeStyle: {
-            backgroundColor: colors.primary,
-            color: 'white',
-            fontSize: 9,
-            lineHeight: 13,
-            fontWeight: 'bold',
-          },
-        }}
-      />
+      <Tab.Screen name="Appointments" component={AppointmentsScreen} />
     </Tab.Navigator>
   );
 }
+
+const styles = StyleSheet.create({
+  iconContainer: {
+    width: 48,
+    height: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  pillIndicator: {
+    position: 'absolute',
+    width: 48,
+    height: 32,
+    borderRadius: 16,
+    zIndex: 1,
+  },
+});

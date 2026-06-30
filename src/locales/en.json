@@ -1,0 +1,17 @@
+{
+  "settings": {
+    "title": "Workspace Settings",
+    "clinicProfile": "Clinic Profile",
+    "branches": "Branches & Hours",
+    "taxSettings": "Tax Settings",
+    "backup": "Backup & Restore",
+    "language": "Language",
+    "theme": "Theme",
+    "logout": "Log Out"
+  },
+  "dashboard": {
+    "welcome": "Welcome back",
+    "revenue": "Revenue Summary",
+    "quickActions": "Quick Actions"
+  }
+}

@@ -187,19 +187,19 @@ export function AddEditOrderScreen({ route, navigation }: AddEditOrderScreenProp
   if (!selectedCustomerId) {
     return (
       <View style={{ flex: 1, backgroundColor: colors.background }}>
-        <View className="bg-[#18181b] border-b border-[#27272a] px-6 pt-14 pb-4 flex-row justify-between items-center">
+        <View className="bg-card border-b border-border px-6 pt-14 pb-4 flex-row justify-between items-center">
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text className="text-[#6366f1] text-sm font-semibold">Cancel</Text>
+            <Text className="text-[#06b6d4] text-sm font-semibold">Cancel</Text>
           </TouchableOpacity>
-          <Text className="text-white text-base font-bold">Select Customer</Text>
+          <Text className="text-text text-base font-bold">Select Customer</Text>
           <View style={{ width: 50 }} />
         </View>
 
         <View className="p-4">
-          <View className="bg-[#18181b] border border-[#27272a] rounded-lg px-3 py-2 flex-row items-center mb-4">
+          <View className="bg-card border border-border rounded-lg px-3 py-2 flex-row items-center mb-4">
             <Ionicons name="search" size={18} color="#71717a" className="mr-2" />
             <TextInput
-              className="flex-1 text-white text-sm py-0.5"
+              className="flex-1 text-text text-sm py-0.5"
               placeholder="Search customer by name or phone..."
               placeholderTextColor="#71717a"
               value={custSearch}
@@ -216,21 +216,21 @@ export function AddEditOrderScreen({ route, navigation }: AddEditOrderScreenProp
               renderItem={({ item }) => (
                 <TouchableOpacity
                   onPress={() => handleSelectCustomer(item)}
-                  className="bg-[#18181b] border border-[#27272a] rounded-xl p-4 mb-3 flex-row justify-between items-center"
+                  className="bg-card border border-border rounded-xl p-4 mb-3 flex-row justify-between items-center"
                 >
                   <View>
-                    <Text className="text-white font-bold text-base">{item.fullName}</Text>
-                    <Text className="text-[#a1a1aa] text-xs mt-1">📞 {item.phone}</Text>
+                    <Text className="text-text font-bold text-base">{item.fullName}</Text>
+                    <Text className="text-textSecondary text-xs mt-1">📞 {item.phone}</Text>
                   </View>
                   <Ionicons name="chevron-forward" size={18} color="#71717a" />
                 </TouchableOpacity>
               )}
               ListEmptyComponent={
                 <View className="items-center py-12">
-                  <Text className="text-[#71717a] text-sm">No customers found.</Text>
+                  <Text className="text-textMuted text-sm">No customers found.</Text>
                   <TouchableOpacity
                     onPress={() => navigation.navigate('AddEditCustomer')}
-                    className="bg-[#6366f1] px-4 py-2 rounded-lg mt-4"
+                    className="bg-[#06b6d4] px-4 py-2 rounded-lg mt-4"
                   >
                     <Text className="text-white font-bold text-xs">Add New Customer</Text>
                   </TouchableOpacity>
@@ -248,62 +248,62 @@ export function AddEditOrderScreen({ route, navigation }: AddEditOrderScreenProp
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={{ flex: 1 }}
-      className="bg-[#09090b]"
+      className="bg-background"
     >
       {/* Header Bar */}
-      <View className="bg-[#18181b] border-b border-[#27272a] px-6 pt-14 pb-4 flex-row justify-between items-center">
+      <View className="bg-card border-b border-border px-6 pt-14 pb-4 flex-row justify-between items-center">
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text className="text-[#6366f1] text-sm font-semibold">Cancel</Text>
+          <Text className="text-[#06b6d4] text-sm font-semibold">Cancel</Text>
         </TouchableOpacity>
-        <Text className="text-white text-base font-bold">{editOrder ? 'Edit Order' : 'New Order'}</Text>
+        <Text className="text-text text-base font-bold">{editOrder ? 'Edit Order' : 'New Order'}</Text>
         <View style={{ width: 50 }} />
       </View>
 
       <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 45 }}>
         {/* Customer Header */}
-        <View className="bg-[#18181b] border border-[#27272a] rounded-2xl p-4 mb-6 flex-row justify-between items-center">
+        <View className="bg-card border border-border rounded-2xl p-4 mb-6 flex-row justify-between items-center">
           <View>
-            <Text className="text-[#71717a] text-[10px] font-bold uppercase tracking-wider">Order For</Text>
-            <Text className="text-white text-lg font-bold mt-0.5">{selectedCustomerName}</Text>
+            <Text className="text-textMuted text-[10px] font-bold uppercase tracking-wider">Order For</Text>
+            <Text className="text-text text-lg font-bold mt-0.5">{selectedCustomerName}</Text>
           </View>
           {!editOrder && (
             <TouchableOpacity
               onPress={() => setSelectedCustomerId(null)}
-              className="bg-[#27272a] px-3 py-1.5 rounded-lg border border-[#3f3f46]"
+              className="bg-border px-3 py-1.5 rounded-lg border border-border"
             >
-              <Text className="text-white text-xs font-semibold">Change</Text>
+              <Text className="text-text text-xs font-semibold">Change</Text>
             </TouchableOpacity>
           )}
         </View>
 
         {/* Prescription Selection */}
-        <Text className="text-white font-bold text-sm mb-3">Link Customer Prescription</Text>
-        <View className="bg-[#18181b] border border-[#27272a] rounded-2xl p-4 mb-6">
+        <Text className="text-text font-bold text-sm mb-3">Link Customer Prescription</Text>
+        <View className="bg-card border border-border rounded-2xl p-4 mb-6">
           {isPrescsLoading ? (
             <ActivityIndicator size="small" color={colors.primary} />
           ) : !prescriptions || prescriptions.length === 0 ? (
             <View className="items-center py-4">
-              <Text className="text-[#71717a] text-xs">No saved prescriptions for this customer.</Text>
+              <Text className="text-textMuted text-xs">No saved prescriptions for this customer.</Text>
               <TouchableOpacity
                 onPress={() => navigation.navigate('AddPrescription', { customerId: selectedCustomerId })}
-                className="bg-[#27272a] px-3 py-1.5 rounded-lg border border-[#3f3f46] mt-3"
+                className="bg-border px-3 py-1.5 rounded-lg border border-border mt-3"
               >
-                <Text className="text-[#6366f1] text-xs font-bold">Add Prescription</Text>
+                <Text className="text-[#06b6d4] text-xs font-bold">Add Prescription</Text>
               </TouchableOpacity>
             </View>
           ) : (
             <View>
-              <Text className="text-[#a1a1aa] text-xs mb-3">Select a prescription log to attach to this glass order:</Text>
+              <Text className="text-textSecondary text-xs mb-3">Select a prescription log to attach to this glass order:</Text>
               
               {/* Select Option: None */}
               <TouchableOpacity
                 onPress={() => setValue('prescriptionId', '')}
                 className={`p-3 rounded-lg border mb-2 flex-row justify-between items-center ${
-                  !activePrescriptionId ? 'bg-[#6366f1]/10 border-[#6366f1]' : 'bg-[#09090b] border-[#27272a]'
+                  !activePrescriptionId ? 'bg-[#06b6d4]/10 border-[#06b6d4]' : 'bg-background border-border'
                 }`}
               >
-                <Text className="text-white text-xs font-semibold">No Prescription (Custom/Plano)</Text>
-                {!activePrescriptionId && <Ionicons name="checkmark-circle" size={16} color="#6366f1" />}
+                <Text className="text-text text-xs font-semibold">No Prescription (Custom/Plano)</Text>
+                {!activePrescriptionId && <Ionicons name="checkmark-circle" size={16} color="#06b6d4" />}
               </TouchableOpacity>
 
               {/* Prescriptions List */}
@@ -312,18 +312,18 @@ export function AddEditOrderScreen({ route, navigation }: AddEditOrderScreenProp
                   key={presc.id}
                   onPress={() => setValue('prescriptionId', presc.id)}
                   className={`p-3 rounded-lg border mb-2 flex-row justify-between items-center ${
-                    activePrescriptionId === presc.id ? 'bg-[#6366f1]/10 border-[#6366f1]' : 'bg-[#09090b] border-[#27272a]'
+                    activePrescriptionId === presc.id ? 'bg-[#06b6d4]/10 border-[#06b6d4]' : 'bg-background border-border'
                   }`}
                 >
                   <View>
-                    <Text className="text-white text-xs font-bold">
+                    <Text className="text-text text-xs font-bold">
                       📅 {new Date(presc.prescriptionDate).toLocaleDateString()}
                     </Text>
-                    <Text className="text-[#a1a1aa] text-[10px] mt-0.5">
+                    <Text className="text-textSecondary text-[10px] mt-0.5">
                       Doctor: {presc.doctorName || 'Not specified'}
                     </Text>
                   </View>
-                  {activePrescriptionId === presc.id && <Ionicons name="checkmark-circle" size={16} color="#6366f1" />}
+                  {activePrescriptionId === presc.id && <Ionicons name="checkmark-circle" size={16} color="#06b6d4" />}
                 </TouchableOpacity>
               ))}
             </View>
@@ -331,15 +331,15 @@ export function AddEditOrderScreen({ route, navigation }: AddEditOrderScreenProp
         </View>
 
         {/* Frame Specifications */}
-        <Text className="text-white font-bold text-sm mb-3">Frame Details</Text>
-        <View className="bg-[#18181b] border border-[#27272a] rounded-2xl p-5 mb-6">
-          <Text className="text-[#a1a1aa] text-xs mb-1.5">Brand</Text>
+        <Text className="text-text font-bold text-sm mb-3">Frame Details</Text>
+        <View className="bg-card border border-border rounded-2xl p-5 mb-6">
+          <Text className="text-textSecondary text-xs mb-1.5">Brand</Text>
           <Controller
             control={control}
             name="frameBrand"
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
-                className="bg-[#09090b] text-white border border-[#27272a] rounded-lg px-4 py-2 mb-3 text-sm"
+                className="bg-background text-text border border-border rounded-lg px-4 py-2 mb-3 text-sm"
                 placeholder="Ray-Ban"
                 placeholderTextColor="#71717a"
                 onBlur={onBlur}
@@ -351,13 +351,13 @@ export function AddEditOrderScreen({ route, navigation }: AddEditOrderScreenProp
 
           <View className="flex-row justify-between">
             <View className="w-[48%]">
-              <Text className="text-[#a1a1aa] text-xs mb-1.5">Model</Text>
+              <Text className="text-textSecondary text-xs mb-1.5">Model</Text>
               <Controller
                 control={control}
                 name="frameModel"
                 render={({ field: { onChange, onBlur, value } }) => (
                   <TextInput
-                    className="bg-[#09090b] text-white border border-[#27272a] rounded-lg px-3 py-2 text-sm"
+                    className="bg-background text-text border border-border rounded-lg px-3 py-2 text-sm"
                     placeholder="Aviator"
                     placeholderTextColor="#71717a"
                     onBlur={onBlur}
@@ -368,13 +368,13 @@ export function AddEditOrderScreen({ route, navigation }: AddEditOrderScreenProp
               />
             </View>
             <View className="w-[48%]">
-              <Text className="text-[#a1a1aa] text-xs mb-1.5">Name/Color</Text>
+              <Text className="text-textSecondary text-xs mb-1.5">Name/Color</Text>
               <Controller
                 control={control}
                 name="frameName"
                 render={({ field: { onChange, onBlur, value } }) => (
                   <TextInput
-                    className="bg-[#09090b] text-white border border-[#27272a] rounded-lg px-3 py-2 text-sm"
+                    className="bg-background text-text border border-border rounded-lg px-3 py-2 text-sm"
                     placeholder="Gold RB3025"
                     placeholderTextColor="#71717a"
                     onBlur={onBlur}
@@ -388,17 +388,17 @@ export function AddEditOrderScreen({ route, navigation }: AddEditOrderScreenProp
         </View>
 
         {/* Lens Specifications */}
-        <Text className="text-white font-bold text-sm mb-3">Lens Details</Text>
-        <View className="bg-[#18181b] border border-[#27272a] rounded-2xl p-5 mb-6">
+        <Text className="text-text font-bold text-sm mb-3">Lens Details</Text>
+        <View className="bg-card border border-border rounded-2xl p-5 mb-6">
           <View className="flex-row justify-between">
             <View className="w-[48%]">
-              <Text className="text-[#a1a1aa] text-xs mb-1.5">Lens Type</Text>
+              <Text className="text-textSecondary text-xs mb-1.5">Lens Type</Text>
               <Controller
                 control={control}
                 name="lensType"
                 render={({ field: { onChange, onBlur, value } }) => (
                   <TextInput
-                    className="bg-[#09090b] text-white border border-[#27272a] rounded-lg px-3 py-2 text-sm"
+                    className="bg-background text-text border border-border rounded-lg px-3 py-2 text-sm"
                     placeholder="Single Vision / Progressive"
                     placeholderTextColor="#71717a"
                     onBlur={onBlur}
@@ -409,13 +409,13 @@ export function AddEditOrderScreen({ route, navigation }: AddEditOrderScreenProp
               />
             </View>
             <View className="w-[48%]">
-              <Text className="text-[#a1a1aa] text-xs mb-1.5">Coating</Text>
+              <Text className="text-textSecondary text-xs mb-1.5">Coating</Text>
               <Controller
                 control={control}
                 name="lensCoating"
                 render={({ field: { onChange, onBlur, value } }) => (
                   <TextInput
-                    className="bg-[#09090b] text-white border border-[#27272a] rounded-lg px-3 py-2 text-sm"
+                    className="bg-background text-text border border-border rounded-lg px-3 py-2 text-sm"
                     placeholder="Blue Cut / Anti-Glare"
                     placeholderTextColor="#71717a"
                     onBlur={onBlur}
@@ -429,17 +429,17 @@ export function AddEditOrderScreen({ route, navigation }: AddEditOrderScreenProp
         </View>
 
         {/* Costing Calculations */}
-        <Text className="text-white font-bold text-sm mb-3">Pricing & Payments</Text>
-        <View className="bg-[#18181b] border border-[#27272a] rounded-2xl p-5 mb-6">
+        <Text className="text-text font-bold text-sm mb-3">Pricing & Payments</Text>
+        <View className="bg-card border border-border rounded-2xl p-5 mb-6">
           <View className="flex-row justify-between mb-4">
             <View className="w-[48%]">
-              <Text className="text-[#a1a1aa] text-xs mb-1.5">Subtotal (₹)</Text>
+              <Text className="text-textSecondary text-xs mb-1.5">Subtotal (₹)</Text>
               <Controller
                 control={control}
                 name="subtotal"
                 render={({ field: { onChange, onBlur, value } }) => (
                   <TextInput
-                    className="bg-[#09090b] text-white border border-[#27272a] rounded-lg px-3 py-2 text-sm text-center font-bold"
+                    className="bg-background text-text border border-border rounded-lg px-3 py-2 text-sm text-center font-bold"
                     placeholder="5000"
                     placeholderTextColor="#71717a"
                     onBlur={onBlur}
@@ -451,13 +451,13 @@ export function AddEditOrderScreen({ route, navigation }: AddEditOrderScreenProp
               />
             </View>
             <View className="w-[48%]">
-              <Text className="text-[#a1a1aa] text-xs mb-1.5">Quantity</Text>
+              <Text className="text-textSecondary text-xs mb-1.5">Quantity</Text>
               <Controller
                 control={control}
                 name="quantity"
                 render={({ field: { onChange, onBlur, value } }) => (
                   <TextInput
-                    className="bg-[#09090b] text-white border border-[#27272a] rounded-lg px-3 py-2 text-sm text-center"
+                    className="bg-background text-text border border-border rounded-lg px-3 py-2 text-sm text-center"
                     placeholder="1"
                     placeholderTextColor="#71717a"
                     onBlur={onBlur}
@@ -472,13 +472,13 @@ export function AddEditOrderScreen({ route, navigation }: AddEditOrderScreenProp
 
           <View className="flex-row justify-between mb-4">
             <View className="w-[48%]">
-              <Text className="text-[#a1a1aa] text-xs mb-1.5">Discount (₹)</Text>
+              <Text className="text-textSecondary text-xs mb-1.5">Discount (₹)</Text>
               <Controller
                 control={control}
                 name="discount"
                 render={({ field: { onChange, onBlur, value } }) => (
                   <TextInput
-                    className="bg-[#09090b] text-white border border-[#27272a] rounded-lg px-3 py-2 text-sm text-center"
+                    className="bg-background text-text border border-border rounded-lg px-3 py-2 text-sm text-center"
                     placeholder="0"
                     placeholderTextColor="#71717a"
                     onBlur={onBlur}
@@ -490,13 +490,13 @@ export function AddEditOrderScreen({ route, navigation }: AddEditOrderScreenProp
               />
             </View>
             <View className="w-[48%]">
-              <Text className="text-[#a1a1aa] text-xs mb-1.5">Tax (₹)</Text>
+              <Text className="text-textSecondary text-xs mb-1.5">Tax (₹)</Text>
               <Controller
                 control={control}
                 name="tax"
                 render={({ field: { onChange, onBlur, value } }) => (
                   <TextInput
-                    className="bg-[#09090b] text-white border border-[#27272a] rounded-lg px-3 py-2 text-sm text-center"
+                    className="bg-background text-text border border-border rounded-lg px-3 py-2 text-sm text-center"
                     placeholder="0"
                     placeholderTextColor="#71717a"
                     onBlur={onBlur}
@@ -510,18 +510,18 @@ export function AddEditOrderScreen({ route, navigation }: AddEditOrderScreenProp
           </View>
 
           {/* Dynamic Math Total Output Box */}
-          <View className="bg-[#09090b] rounded-xl p-4 border border-[#27272a] mb-4 flex-row justify-between items-center">
-            <Text className="text-white font-bold text-sm">Grand Total:</Text>
-            <Text className="text-[#6366f1] font-black text-lg">₹{totalCalculated.toFixed(2)}</Text>
+          <View className="bg-background rounded-xl p-4 border border-border mb-4 flex-row justify-between items-center">
+            <Text className="text-text font-bold text-sm">Grand Total:</Text>
+            <Text className="text-[#06b6d4] font-black text-lg">₹{totalCalculated.toFixed(2)}</Text>
           </View>
 
-          <Text className="text-[#a1a1aa] text-xs mb-1.5">Amount Paid (₹)</Text>
+          <Text className="text-textSecondary text-xs mb-1.5">Amount Paid (₹)</Text>
           <Controller
             control={control}
             name="paidAmount"
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
-                className="bg-[#09090b] text-white border border-[#27272a] rounded-lg px-4 py-2.5 mb-3 text-sm text-center font-bold"
+                className="bg-background text-text border border-border rounded-lg px-4 py-2.5 mb-3 text-sm text-center font-bold"
                 placeholder="0"
                 placeholderTextColor="#71717a"
                 onBlur={onBlur}
@@ -533,7 +533,7 @@ export function AddEditOrderScreen({ route, navigation }: AddEditOrderScreenProp
           />
 
           <View className="flex-row justify-between items-center mt-1">
-            <Text className="text-[#71717a] text-xs">Balance Due:</Text>
+            <Text className="text-textMuted text-xs">Balance Due:</Text>
             <Text className={`text-xs font-bold ${balanceDue > 0 ? 'text-rose-500' : 'text-emerald-500'}`}>
               {balanceDue > 0 ? `₹${balanceDue.toFixed(2)}` : 'Full Settlement ✅'}
             </Text>
@@ -541,15 +541,15 @@ export function AddEditOrderScreen({ route, navigation }: AddEditOrderScreenProp
         </View>
 
         {/* Metadata & Delivery Details */}
-        <Text className="text-white font-bold text-sm mb-3">Delivery & Schedule</Text>
-        <View className="bg-[#18181b] border border-[#27272a] rounded-2xl p-5 mb-6">
-          <Text className="text-[#a1a1aa] text-sm font-medium mb-2">Expected Delivery Date (YYYY-MM-DD)</Text>
+        <Text className="text-text font-bold text-sm mb-3">Delivery & Schedule</Text>
+        <View className="bg-card border border-border rounded-2xl p-5 mb-6">
+          <Text className="text-textSecondary text-sm font-medium mb-2">Expected Delivery Date (YYYY-MM-DD)</Text>
           <Controller
             control={control}
             name="expectedDeliveryDate"
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
-                className="bg-[#09090b] text-white border border-[#27272a] rounded-lg px-4 py-2.5 mb-4 text-sm"
+                className="bg-background text-text border border-border rounded-lg px-4 py-2.5 mb-4 text-sm"
                 placeholder="2026-07-05"
                 placeholderTextColor="#71717a"
                 onBlur={onBlur}
@@ -562,13 +562,13 @@ export function AddEditOrderScreen({ route, navigation }: AddEditOrderScreenProp
             <Text className="text-[#ef4444] text-xs mb-3">{errors.expectedDeliveryDate.message as string}</Text>
           )}
 
-          <Text className="text-[#a1a1aa] text-sm font-medium mb-2">Notes</Text>
+          <Text className="text-textSecondary text-sm font-medium mb-2">Notes</Text>
           <Controller
             control={control}
             name="notes"
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
-                className="bg-[#09090b] text-white border border-[#27272a] rounded-lg px-4 py-2.5 text-sm h-20"
+                className="bg-background text-text border border-border rounded-lg px-4 py-2.5 text-sm h-20"
                 placeholder="Additional instructions e.g. express delivery"
                 placeholderTextColor="#71717a"
                 onBlur={onBlur}
@@ -583,14 +583,14 @@ export function AddEditOrderScreen({ route, navigation }: AddEditOrderScreenProp
         </View>
 
         <TouchableOpacity
-          className="bg-[#6366f1] rounded-lg py-3.5 items-center flex-row justify-center"
+          className="bg-[#06b6d4] rounded-lg py-3.5 items-center flex-row justify-center"
           onPress={handleSubmit(onSubmit)}
           disabled={isSubmitting}
         >
           {isSubmitting ? (
             <ActivityIndicator color="#ffffff" className="mr-2" />
           ) : null}
-          <Text className="text-white text-base font-bold">{editOrder ? 'Save Changes' : 'Place Order'}</Text>
+          <Text className="text-text text-base font-bold">{editOrder ? 'Save Changes' : 'Place Order'}</Text>
         </TouchableOpacity>
 
       </ScrollView>

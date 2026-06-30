@@ -3,10 +3,13 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView, ActivityIndicator,
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { axiosClient } from '../../api/axiosClient';
 import { ENDPOINTS } from '../../api/endpoints';
+import { colors } from '../../theme/colors';
 
 const prescriptionSchema = z.object({
   doctorName: z.string().optional(),
@@ -46,20 +49,20 @@ function NumberStepper({ value, onChange, placeholder = '0.00', step = 0.25 }: N
   };
 
   return (
-    <View className="flex-row items-center bg-[#09090b] border border-[#27272a] rounded-lg overflow-hidden">
-      <TouchableOpacity onPress={handleDecrement} className="bg-[#27272a] px-3.5 py-2.5">
-        <Text className="text-white font-bold text-sm">-</Text>
+    <View className="flex-row items-center bg-background border border-border rounded-lg overflow-hidden">
+      <TouchableOpacity onPress={handleDecrement} className="bg-border px-3.5 py-2.5">
+        <Text className="text-text font-bold text-sm">-</Text>
       </TouchableOpacity>
       <TextInput
-        className="flex-1 text-white text-center text-sm py-2"
+        className="flex-1 text-text text-center text-sm py-2"
         placeholder={placeholder}
         placeholderTextColor="#71717a"
         value={value}
         onChangeText={onChange}
         keyboardType="numeric"
       />
-      <TouchableOpacity onPress={handleIncrement} className="bg-[#27272a] px-3.5 py-2.5">
-        <Text className="text-white font-bold text-sm">+</Text>
+      <TouchableOpacity onPress={handleIncrement} className="bg-border px-3.5 py-2.5">
+        <Text className="text-text font-bold text-sm">+</Text>
       </TouchableOpacity>
     </View>
   );
@@ -78,19 +81,25 @@ function VisualLensPreview({ eye, sph, cyl, axis, setValue, axisFieldName }: Vis
   const rotation = parseFloat(axis) || 0;
   const sphNum = parseFloat(sph) || 0;
   const cylNum = parseFloat(cyl) || 0;
+  const isRight = eye === 'OD';
 
   // Determine diagnosis type
-  let typeLabel = 'Emmetropia (Normal)';
-  let badgeColor = 'bg-[#27272a] text-[#a1a1aa]';
-  if (sphNum < 0) {
-    typeLabel = 'Myopia (Nearsighted)';
-    badgeColor = 'bg-[#ef4444]/20 text-[#ef4444]';
-  } else if (sphNum > 0) {
-    typeLabel = 'Hyperopia (Farsighted)';
-    badgeColor = 'bg-[#10b981]/20 text-[#10b981]';
+  let typeLabel = 'Emmetropia';
+  let diagnosisColor = '#a1a1aa';
+  let diagnosisBg = 'bg-border';
+  if (sphNum < -0.25) {
+    typeLabel = 'Myopia';
+    diagnosisColor = '#ef4444';
+    diagnosisBg = 'bg-[#ef4444]/15';
+  } else if (sphNum > 0.25) {
+    typeLabel = 'Hyperopia';
+    diagnosisColor = '#10b981';
+    diagnosisBg = 'bg-[#10b981]/15';
   }
 
-  const hasAstigmatism = cylNum !== 0;
+  const hasAstigmatism = Math.abs(cylNum) >= 0.25;
+  const lensRingSize = Math.max(30, 90 - Math.min(Math.abs(sphNum) * 9, 45));
+  const lensRingColor = sphNum < 0 ? '#ef4444' : sphNum > 0 ? '#10b981' : '#374151';
 
   const handleTouch = (event: any) => {
     const { locationX, locationY } = event.nativeEvent;
@@ -111,71 +120,102 @@ function VisualLensPreview({ eye, sph, cyl, axis, setValue, axisFieldName }: Vis
   };
 
   return (
-    <View className="items-center bg-[#09090b] rounded-2xl p-4 border border-[#27272a] mb-5">
-      <Text className="text-white text-[11px] font-bold tracking-wider mb-2">
-        {eye === 'OD' ? 'RIGHT EYE (OD) LENS' : 'LEFT EYE (OS) LENS'}
+    <View className="items-center bg-background rounded-2xl p-4 border border-border mb-4">
+      <Text
+        className="text-[11px] font-bold tracking-widest mb-1"
+        style={{ color: isRight ? '#06b6d4' : '#a78bfa' }}
+      >
+        {isRight ? 'RIGHT EYE (OD) LENS' : 'LEFT EYE (OS) LENS'}
       </Text>
       
-      <Text className="text-[#71717a] text-[10px] mb-3">
+      <Text className="text-textMuted text-[10px] mb-3">
         Drag/rotate inside circle to set Axis
       </Text>
 
       {/* Spectacle Lens Circle */}
       <View
-        className="w-28 h-28 rounded-full border-2 border-[#6366f1] items-center justify-center bg-[#18181b] relative overflow-hidden shadow-inner"
+        className="w-28 h-28 rounded-full items-center justify-center bg-card relative overflow-hidden"
+        style={{
+          borderWidth: 2,
+          borderColor: isRight ? '#06b6d4' : '#a78bfa',
+          shadowColor: isRight ? '#06b6d4' : '#a78bfa',
+          shadowOpacity: 0.25,
+          shadowRadius: 8,
+          shadowOffset: { width: 0, height: 0 },
+        }}
         onStartShouldSetResponder={() => true}
         onMoveShouldSetResponder={() => true}
         onResponderGrant={handleTouch}
         onResponderMove={handleTouch}
       >
-        <View className="absolute w-full h-[0.5px] bg-[#27272a]" />
-        <View className="absolute h-full w-[0.5px] bg-[#27272a]" />
+        <View className="absolute w-full h-[0.5px] bg-border" />
+        <View className="absolute h-full w-[0.5px] bg-border" />
         
-        {Math.abs(sphNum) > 0 && (
+        {Math.abs(sphNum) >= 0.25 && (
           <View
             style={{
-              width: Math.max(30, 90 - Math.min(Math.abs(sphNum) * 8, 60)),
-              height: Math.max(30, 90 - Math.min(Math.abs(sphNum) * 8, 60)),
-              borderRadius: 999,
+              width: lensRingSize,
+              height: lensRingSize,
+              borderRadius: lensRingSize / 2,
               borderWidth: 1.5,
-              borderColor: sphNum < 0 ? '#ef4444' : '#10b981',
-              opacity: 0.5,
+              borderColor: lensRingColor,
               borderStyle: 'dashed',
+              opacity: 0.55,
+              position: 'absolute',
             }}
-            className="absolute"
           />
         )}
 
         <View
           style={{
-            width: '85%',
+            position: 'absolute',
+            width: '80%',
             height: 2.5,
-            backgroundColor: '#6366f1',
+            backgroundColor: isRight ? '#06b6d4' : '#a78bfa',
+            borderRadius: 1.25,
             transform: [{ rotate: `${rotation}deg` }],
-            opacity: hasAstigmatism ? 1 : 0.15,
+            opacity: hasAstigmatism ? 0.9 : 0.12,
           }}
-          className="absolute"
         />
 
-        <View className="w-3.5 h-3.5 rounded-full bg-[#10b981] border-2 border-white absolute shadow" />
+        {hasAstigmatism && (
+          <View
+            style={{
+              position: 'absolute',
+              width: '80%',
+              height: 1,
+              backgroundColor: '#f59e0b',
+              borderRadius: 1,
+              transform: [{ rotate: `${rotation + 90}deg` }],
+              opacity: 0.4,
+            }}
+          />
+        )}
+
+        <View
+          className="w-3.5 h-3.5 rounded-full border-2 border-white absolute"
+          style={{ backgroundColor: isRight ? '#06b6d4' : '#a78bfa' }}
+        />
       </View>
 
       {/* Lens Details Labels */}
       <View className="mt-3.5 items-center">
-        <Text className="text-white text-xs font-bold">
-          SPH: {sphNum > 0 ? `+${sphNum.toFixed(2)}` : sphNum.toFixed(2)} D
+        <Text className="text-text text-xs font-bold font-mono">
+          SPH: {sphNum >= 0 ? `+${sphNum.toFixed(2)}` : sphNum.toFixed(2)} D
         </Text>
-        <Text className="text-[#a1a1aa] text-[11px] mt-0.5 font-medium">
-          CYL: {cylNum > 0 ? `+${cylNum.toFixed(2)}` : cylNum.toFixed(2)} D | AXIS: {rotation}°
+        <Text className="text-textSecondary text-[11px] mt-0.5 font-medium font-mono">
+          CYL: {cylNum.toFixed(2)} D | AXIS: {rotation}°
         </Text>
         
         <View className="flex-row mt-2.5">
-          <View className={`px-2 py-0.5 rounded-full ${badgeColor} mr-2`}>
-            <Text className="text-[9px] font-bold tracking-wide uppercase">{typeLabel}</Text>
+          <View className={`px-2 py-0.5 rounded-full ${diagnosisBg} mr-2`}>
+            <Text className="text-[9px] font-bold tracking-wide uppercase" style={{ color: diagnosisColor }}>
+              {typeLabel}
+            </Text>
           </View>
           {hasAstigmatism && (
-            <View className="px-2 py-0.5 rounded-full bg-[#b45309]/20">
-              <Text className="text-[#d97706] text-[9px] font-bold tracking-wide uppercase">Astigmatism</Text>
+            <View className="px-2 py-0.5 rounded-full bg-[#f59e0b]/15">
+              <Text className="text-[#f59e0b] text-[9px] font-bold tracking-wide uppercase">Astigmatism</Text>
             </View>
           )}
         </View>
@@ -190,6 +230,7 @@ interface AddEditPrescriptionScreenProps {
 }
 
 export function AddEditPrescriptionScreen({ route, navigation }: AddEditPrescriptionScreenProps) {
+  const insets = useSafeAreaInsets();
   const { customerId, prescription } = route.params || {};
   const isEdit = !!prescription;
   const queryClient = useQueryClient();
@@ -278,26 +319,29 @@ export function AddEditPrescriptionScreen({ route, navigation }: AddEditPrescrip
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={{ flex: 1 }}
-      className="bg-[#09090b]"
+      className="bg-background"
     >
       {/* Header Bar */}
-      <View className="bg-[#18181b] border-b border-[#27272a] px-6 pt-14 pb-4 flex-row justify-between items-center">
+      <View 
+        className="bg-card border-b border-border px-6 pb-4 flex-row justify-between items-center"
+        style={{ paddingTop: insets.top > 0 ? insets.top + 8 : 16 }}
+      >
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text className="text-[#6366f1] text-sm font-semibold">Cancel</Text>
+          <Text className="text-[#06b6d4] text-sm font-semibold">Cancel</Text>
         </TouchableOpacity>
-        <Text className="text-white text-base font-bold">{isEdit ? 'Edit Prescription' : 'Add Prescription'}</Text>
+        <Text className="text-text text-base font-bold">{isEdit ? 'Edit Prescription' : 'Add Prescription'}</Text>
         <View style={{ width: 50 }} />
       </View>
 
       <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 45 }}>
-        <View className="bg-[#18181b] border border-[#27272a] rounded-2xl p-5 mb-6">
-          <Text className="text-[#a1a1aa] text-sm font-medium mb-2">Doctor Name</Text>
+        <View className="bg-card border border-border rounded-2xl p-5 mb-6">
+          <Text className="text-textSecondary text-sm font-medium mb-2">Doctor Name</Text>
           <Controller
             control={control}
             name="doctorName"
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
-                className="bg-[#09090b] text-white border border-[#27272a] rounded-lg px-4 py-2.5 mb-3 text-sm"
+                className="bg-background text-text border border-border rounded-lg px-4 py-2.5 mb-3 text-sm"
                 placeholder="Dr. Mehta"
                 placeholderTextColor="#71717a"
                 onBlur={onBlur}
@@ -307,13 +351,13 @@ export function AddEditPrescriptionScreen({ route, navigation }: AddEditPrescrip
             )}
           />
 
-          <Text className="text-[#a1a1aa] text-sm font-medium mb-2">Prescription Date (YYYY-MM-DD)</Text>
+          <Text className="text-textSecondary text-sm font-medium mb-2">Prescription Date (YYYY-MM-DD)</Text>
           <Controller
             control={control}
             name="prescriptionDate"
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
-                className="bg-[#09090b] text-white border border-[#27272a] rounded-lg px-4 py-2.5 mb-1 text-sm"
+                className="bg-background text-text border border-border rounded-lg px-4 py-2.5 mb-1 text-sm"
                 placeholder="2026-06-28"
                 placeholderTextColor="#71717a"
                 onBlur={onBlur}
@@ -328,8 +372,8 @@ export function AddEditPrescriptionScreen({ route, navigation }: AddEditPrescrip
         </View>
 
         {/* Right Eye OD Card */}
-        <Text className="text-white font-bold text-sm mb-3">Right Eye (OD)</Text>
-        <View className="bg-[#18181b] border border-[#27272a] rounded-2xl p-5 mb-6">
+        <Text className="text-text font-bold text-sm mb-3">Right Eye (OD)</Text>
+        <View className="bg-card border border-border rounded-2xl p-5 mb-6">
           <VisualLensPreview
             eye="OD"
             sph={rightSph}
@@ -341,7 +385,7 @@ export function AddEditPrescriptionScreen({ route, navigation }: AddEditPrescrip
 
           <View className="flex-row justify-between mb-3">
             <View className="w-[48%]">
-              <Text className="text-[#a1a1aa] text-xs mb-1.5">Sphere (SPH)</Text>
+              <Text className="text-textSecondary text-xs mb-1.5">Sphere (SPH)</Text>
               <Controller
                 control={control}
                 name="rightSphere"
@@ -351,7 +395,7 @@ export function AddEditPrescriptionScreen({ route, navigation }: AddEditPrescrip
               />
             </View>
             <View className="w-[48%]">
-              <Text className="text-[#a1a1aa] text-xs mb-1.5">Cylinder (CYL)</Text>
+              <Text className="text-textSecondary text-xs mb-1.5">Cylinder (CYL)</Text>
               <Controller
                 control={control}
                 name="rightCylinder"
@@ -363,13 +407,13 @@ export function AddEditPrescriptionScreen({ route, navigation }: AddEditPrescrip
           </View>
           <View className="flex-row justify-between">
             <View className="w-[48%]">
-              <Text className="text-[#a1a1aa] text-xs mb-1.5">Axis</Text>
+              <Text className="text-textSecondary text-xs mb-1.5">Axis</Text>
               <Controller
                 control={control}
                 name="rightAxis"
                 render={({ field: { onChange, onBlur, value } }) => (
                   <TextInput
-                    className="bg-[#09090b] text-white border border-[#27272a] rounded-lg px-3 py-2.5 text-sm h-[40px] text-center"
+                    className="bg-background text-text border border-border rounded-lg px-3 py-2.5 text-sm h-[40px] text-center"
                     placeholder="90"
                     placeholderTextColor="#71717a"
                     onBlur={onBlur}
@@ -381,7 +425,7 @@ export function AddEditPrescriptionScreen({ route, navigation }: AddEditPrescrip
               />
             </View>
             <View className="w-[48%]">
-              <Text className="text-[#a1a1aa] text-xs mb-1.5">Add</Text>
+              <Text className="text-textSecondary text-xs mb-1.5">Add</Text>
               <Controller
                 control={control}
                 name="rightAdd"
@@ -396,16 +440,16 @@ export function AddEditPrescriptionScreen({ route, navigation }: AddEditPrescrip
         {/* Copy OD to OS Button */}
         <TouchableOpacity
           onPress={copyODtoOS}
-          className="bg-[#18181b] border border-[#6366f1]/40 rounded-xl py-3 items-center mb-6 flex-row justify-center"
+          className="bg-card border border-primary/40 rounded-xl py-3 items-center mb-6 flex-row justify-center"
         >
-          <Text className="text-[#6366f1] text-xs font-bold uppercase tracking-wider">
+          <Text className="text-[#06b6d4] text-xs font-bold uppercase tracking-wider">
             Copy Right Eye (OD) ➡️ Left Eye (OS)
           </Text>
         </TouchableOpacity>
 
         {/* Left Eye OS Card */}
-        <Text className="text-white font-bold text-sm mb-3">Left Eye (OS)</Text>
-        <View className="bg-[#18181b] border border-[#27272a] rounded-2xl p-5 mb-6">
+        <Text className="text-text font-bold text-sm mb-3">Left Eye (OS)</Text>
+        <View className="bg-card border border-border rounded-2xl p-5 mb-6">
           <VisualLensPreview
             eye="OS"
             sph={leftSph}
@@ -417,7 +461,7 @@ export function AddEditPrescriptionScreen({ route, navigation }: AddEditPrescrip
 
           <View className="flex-row justify-between mb-3">
             <View className="w-[48%]">
-              <Text className="text-[#a1a1aa] text-xs mb-1.5">Sphere (SPH)</Text>
+              <Text className="text-textSecondary text-xs mb-1.5">Sphere (SPH)</Text>
               <Controller
                 control={control}
                 name="leftSphere"
@@ -427,7 +471,7 @@ export function AddEditPrescriptionScreen({ route, navigation }: AddEditPrescrip
               />
             </View>
             <View className="w-[48%]">
-              <Text className="text-[#a1a1aa] text-xs mb-1.5">Cylinder (CYL)</Text>
+              <Text className="text-textSecondary text-xs mb-1.5">Cylinder (CYL)</Text>
               <Controller
                 control={control}
                 name="leftCylinder"
@@ -439,13 +483,13 @@ export function AddEditPrescriptionScreen({ route, navigation }: AddEditPrescrip
           </View>
           <View className="flex-row justify-between">
             <View className="w-[48%]">
-              <Text className="text-[#a1a1aa] text-xs mb-1.5">Axis</Text>
+              <Text className="text-textSecondary text-xs mb-1.5">Axis</Text>
               <Controller
                 control={control}
                 name="leftAxis"
                 render={({ field: { onChange, onBlur, value } }) => (
                   <TextInput
-                    className="bg-[#09090b] text-white border border-[#27272a] rounded-lg px-3 py-2.5 text-sm h-[40px] text-center"
+                    className="bg-background text-text border border-border rounded-lg px-3 py-2.5 text-sm h-[40px] text-center"
                     placeholder="85"
                     placeholderTextColor="#71717a"
                     onBlur={onBlur}
@@ -457,7 +501,7 @@ export function AddEditPrescriptionScreen({ route, navigation }: AddEditPrescrip
               />
             </View>
             <View className="w-[48%]">
-              <Text className="text-[#a1a1aa] text-xs mb-1.5">Add</Text>
+              <Text className="text-textSecondary text-xs mb-1.5">Add</Text>
               <Controller
                 control={control}
                 name="leftAdd"
@@ -470,14 +514,14 @@ export function AddEditPrescriptionScreen({ route, navigation }: AddEditPrescrip
         </View>
 
         {/* Pupillary Distance & Notes */}
-        <View className="bg-[#18181b] border border-[#27272a] rounded-2xl p-5 mb-6">
-          <Text className="text-[#a1a1aa] text-sm font-medium mb-2">Pupillary Distance (PD mm)</Text>
+        <View className="bg-card border border-border rounded-2xl p-5 mb-6">
+          <Text className="text-textSecondary text-sm font-medium mb-2">Pupillary Distance (PD mm)</Text>
           <Controller
             control={control}
             name="pupillaryDistance"
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
-                className="bg-[#09090b] text-white border border-[#27272a] rounded-lg px-4 py-2.5 mb-4 text-sm"
+                className="bg-background text-text border border-border rounded-lg px-4 py-2.5 mb-4 text-sm"
                 placeholder="62"
                 placeholderTextColor="#71717a"
                 onBlur={onBlur}
@@ -488,13 +532,13 @@ export function AddEditPrescriptionScreen({ route, navigation }: AddEditPrescrip
             )}
           />
 
-          <Text className="text-[#a1a1aa] text-sm font-medium mb-2">Notes</Text>
+          <Text className="text-textSecondary text-sm font-medium mb-2">Notes</Text>
           <Controller
             control={control}
             name="notes"
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
-                className="bg-[#09090b] text-white border border-[#27272a] rounded-lg px-4 py-2.5 text-sm h-20"
+                className="bg-background text-text border border-border rounded-lg px-4 py-2.5 text-sm h-20"
                 placeholder="First prescription details"
                 placeholderTextColor="#71717a"
                 onBlur={onBlur}
@@ -509,14 +553,14 @@ export function AddEditPrescriptionScreen({ route, navigation }: AddEditPrescrip
         </View>
 
         <TouchableOpacity
-          className="bg-[#6366f1] rounded-lg py-3.5 items-center flex-row justify-center"
+          className="bg-[#06b6d4] rounded-lg py-3.5 items-center flex-row justify-center"
           onPress={handleSubmit(onSubmit)}
           disabled={isSubmitting}
         >
           {isSubmitting ? (
             <ActivityIndicator color="#ffffff" className="mr-2" />
           ) : null}
-          <Text className="text-white text-base font-bold">{isEdit ? 'Save Changes' : 'Create Prescription'}</Text>
+          <Text className="text-text text-base font-bold">{isEdit ? 'Save Changes' : 'Create Prescription'}</Text>
         </TouchableOpacity>
 
       </ScrollView>

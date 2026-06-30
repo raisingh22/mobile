@@ -1,0 +1,17 @@
+{
+  "settings": {
+    "title": "ਵਰਕਸਪੇਸ ਸੈਟਿੰਗਜ਼",
+    "clinicProfile": "ਕਲੀਨਿਕ ਪ੍ਰੋਫਾਈਲ",
+    "branches": "ਸ਼ਾਖਾਵਾਂ ਅਤੇ ਸਮਾਂ",
+    "taxSettings": "ਟੈਕਸ ਸੈਟਿੰਗਜ਼",
+    "backup": "ਬੈਕਅੱਪ ਅਤੇ ਰੀਸਟੋਰ",
+    "language": "ਭਾਸ਼ਾ",
+    "theme": "ਥੀਮ",
+    "logout": "ਲੌਗ ਆਉਟ"
+  },
+  "dashboard": {
+    "welcome": "ਜੀ ਆਇਆਂ ਨੂੰ",
+    "revenue": "ਆਮਦਨ ਸਾਰ",
+    "quickActions": "ਤੁਰੰਤ ਕਾਰਵਾਈਆਂ"
+  }
+}

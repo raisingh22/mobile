@@ -28,4 +28,13 @@ export const ENDPOINTS = {
     update: (id: string) => `/prescriptions/${id}`,
     delete: (id: string) => `/prescriptions/${id}`,
   },
+  appointments: {
+    list: '/appointments',
+    create: '/appointments',
+    walkIn: '/appointments/walk-in',
+    details: (id: string) => `/appointments/${id}`,
+    update: (id: string) => `/appointments/${id}`,
+    delete: (id: string) => `/appointments/${id}`,
+    forCustomer: (customerId: string) => `/customers/${customerId}/appointments`,
+  },
 } as const;

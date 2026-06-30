@@ -1,11 +1,6 @@
-import { Platform } from 'react-native';
-
 const getBaseUrl = () => {
   if (process.env.EXPO_PUBLIC_API_URL) {
-    return process.env.EXPO_PUBLIC_API_URL;
-  }
-  if (Platform.OS === 'android') {
-    return 'http://10.0.2.2:3000';
+    return process.env.EXPO_PUBLIC_API_URL.replace(/\/$/, '');
   }
   // 10.219.117.165 is the computer's local IP address.
   // Using the local IP ensures that both physical devices and simulators/emulators
@@ -14,4 +9,3 @@ const getBaseUrl = () => {
 };
 
 export const API_URL = `${getBaseUrl()}/api/v1`;
-

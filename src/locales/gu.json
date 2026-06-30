@@ -1,0 +1,17 @@
+{
+  "settings": {
+    "title": "વર્કસ્પેસ સેટિંગ્સ",
+    "clinicProfile": "ક્લિનિક પ્રોફાઇલ",
+    "branches": "શાખાઓ અને સમય",
+    "taxSettings": "કર સેટિંગ્સ",
+    "backup": "બેકઅપ અને પુનઃપ્રાપ્તિ",
+    "language": "ભાષા",
+    "theme": "થીમ",
+    "logout": "લોગ આઉટ"
+  },
+  "dashboard": {
+    "welcome": "સ્વાગત છે",
+    "revenue": "આવક સારાંશ",
+    "quickActions": "ઝડપી ક્રિયાઓ"
+  }
+}

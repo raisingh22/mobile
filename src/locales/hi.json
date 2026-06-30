@@ -1,0 +1,17 @@
+{
+  "settings": {
+    "title": "कार्यस्थान सेटिंग्स",
+    "clinicProfile": "क्लिनिक प्रोफ़ाइल",
+    "branches": "शाखाएं और समय",
+    "taxSettings": "कर सेटिंग्स",
+    "backup": "बैकअप और पुनर्स्थापना",
+    "language": "भाषा",
+    "theme": "थीम",
+    "logout": "लॉग आउट"
+  },
+  "dashboard": {
+    "welcome": "स्वागत हे",
+    "revenue": "राजस्व सारांश",
+    "quickActions": "त्वरित कार्रवाई"
+  }
+}
