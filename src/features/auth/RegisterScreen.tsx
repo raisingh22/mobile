@@ -18,7 +18,8 @@ import { useThemeColors } from '../../theme/colors';
 
 const registerSchema = z.object({
   fullName: z.string().min(2, 'Name must be at least 2 characters'),
-  email: z.string().email('Invalid email address'),
+  mobileNumber: z.string().regex(/^\+?[1-9]\d{1,14}$/, 'Invalid mobile number format (e.g. +919876543210)'),
+  email: z.string().email('Invalid email address').optional().or(z.literal('')),
   password: z.string().min(8, 'Password must be at least 8 characters'),
   workspaceName: z.string().min(3, 'Workspace name must be at least 3 characters'),
 });
@@ -51,7 +52,7 @@ export function RegisterScreen({ navigation }: RegisterScreenProps) {
 
   const { control, handleSubmit, formState: { errors } } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { fullName: '', email: '', password: '', workspaceName: '' },
+    defaultValues: { fullName: '', mobileNumber: '', email: '', password: '', workspaceName: '' },
   });
 
   const onSubmit = async (data: RegisterFormData) => {
@@ -135,9 +136,19 @@ export function RegisterScreen({ navigation }: RegisterScreenProps) {
                 />
               )}
             />
+            <Controller control={control} name="mobileNumber"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input label="Mobile Number" placeholder="+919876543210"
+                  icon="call-outline"
+                  onBlur={onBlur} onChangeText={onChange} value={value}
+                  autoCapitalize="none" keyboardType="phone-pad"
+                  error={errors.mobileNumber?.message}
+                />
+              )}
+            />
             <Controller control={control} name="email"
               render={({ field: { onChange, onBlur, value } }) => (
-                <Input label="Email Address" placeholder="you@clinic.com"
+                <Input label="Email Address (Optional)" placeholder="you@clinic.com"
                   icon="mail-outline"
                   onBlur={onBlur} onChangeText={onChange} value={value}
                   autoCapitalize="none" keyboardType="email-address"

@@ -74,7 +74,7 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
             <Text className="text-primary text-3xl font-bold">{getInitials(user?.fullName)}</Text>
           </View>
           <Text style={{ color: colors.text }} className="text-xl font-bold">{user?.fullName}</Text>
-          <Text style={{ color: colors.textSecondary }} className="text-sm mt-1">{user?.email}</Text>
+          <Text style={{ color: colors.textSecondary }} className="text-sm mt-1">{user?.email || user?.mobileNumber}</Text>
         </View>
 
         {/* Business Settings */}

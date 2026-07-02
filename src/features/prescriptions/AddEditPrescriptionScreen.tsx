@@ -1106,28 +1106,28 @@ export function AddEditPrescriptionScreen({ route, navigation }: AddEditPrescrip
                 </View>
 
                 {/* CYL Row */}
-                <View className="flex-row items-center py-1 border-t border-borderLight/30">
+                <View className="flex-row items-center py-1 border-t" style={{ borderTopColor: colors.borderLight }}>
                   <View className="w-[20%]"><Text className="text-xs text-textSecondary font-bold">CYL</Text></View>
                   <View className="w-[40%]"><Text className="text-center text-xs font-mono font-bold" style={{ color: colors.text }}>{rightCyl ? parseFloat(rightCyl).toFixed(2) : '0.00'}</Text></View>
                   <View className="w-[40%]"><Text className="text-center text-xs font-mono font-bold" style={{ color: colors.text }}>{leftCyl ? parseFloat(leftCyl).toFixed(2) : '0.00'}</Text></View>
                 </View>
 
                 {/* AXIS Row */}
-                <View className="flex-row items-center py-1 border-t border-borderLight/30">
+                <View className="flex-row items-center py-1 border-t" style={{ borderTopColor: colors.borderLight }}>
                   <View className="w-[20%]"><Text className="text-xs text-textSecondary font-bold">AXIS</Text></View>
                   <View className="w-[40%]"><Text className="text-center text-xs font-mono font-bold" style={{ color: colors.text }}>{rightAxis || '90'}°</Text></View>
                   <View className="w-[40%]"><Text className="text-center text-xs font-mono font-bold" style={{ color: colors.text }}>{leftAxis || '90'}°</Text></View>
                 </View>
 
                 {/* ADD Row */}
-                <View className="flex-row items-center py-1 border-t border-borderLight/30">
+                <View className="flex-row items-center py-1 border-t" style={{ borderTopColor: colors.borderLight }}>
                   <View className="w-[20%]"><Text className="text-xs text-textSecondary font-bold">ADD</Text></View>
                   <View className="w-[40%]"><Text className="text-center text-xs font-mono font-bold" style={{ color: colors.text }}>{rightAdd ? (parseFloat(rightAdd) >= 0 ? `+${parseFloat(rightAdd).toFixed(2)}` : parseFloat(rightAdd).toFixed(2)) : '0.00'}</Text></View>
                   <View className="w-[40%]"><Text className="text-center text-xs font-mono font-bold" style={{ color: colors.text }}>{leftAdd ? (parseFloat(leftAdd) >= 0 ? `+${parseFloat(leftAdd).toFixed(2)}` : parseFloat(leftAdd).toFixed(2)) : '0.00'}</Text></View>
                 </View>
 
                 {/* VA Acuity Row */}
-                <View className="flex-row items-center py-1 border-t border-borderLight/30">
+                <View className="flex-row items-center py-1 border-t" style={{ borderTopColor: colors.borderLight }}>
                   <View className="w-[20%]"><Text className="text-xs text-textSecondary font-bold">VA</Text></View>
                   <View className="w-[40%]"><Text className="text-center text-xs font-bold" style={{ color: colors.text }}>{odAcuity}</Text></View>
                   <View className="w-[40%]"><Text className="text-center text-xs font-bold" style={{ color: colors.text }}>{osAcuity}</Text></View>
@@ -1186,7 +1186,7 @@ export function AddEditPrescriptionScreen({ route, navigation }: AddEditPrescrip
 
       {/* Dynamic Clinical Cockpit HUD summary panel */}
       {activeStep > 0 && activeStep < 4 && (
-        <View style={s.floatingHud} className="bg-card/95 border border-borderLight shadow-2xl">
+        <View style={[s.floatingHud, { backgroundColor: colors.card + 'f2' }]} className="border border-borderLight shadow-2xl">
           <View style={s.hudRow}>
             <View>
               <Text style={s.hudTitle}>Console HUD</Text>

@@ -169,7 +169,7 @@ export function CustomerDetailsScreen({ route, navigation }: { route: any; navig
 
   const isLoading = isCustLoading || isVisitsLoading;
 
-  if (isLoading) {
+  if (isLoading || !customerData) {
     return (
       <View style={{ flex: 1, backgroundColor: colors.backgroundSolid }} className="justify-center items-center">
         <View className="w-16 h-16 rounded-full bg-primary/10 items-center justify-center mb-4">

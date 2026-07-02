@@ -4,7 +4,8 @@ import { secureStore } from '../services/secureStore';
 export interface UserProfile {
   id: string;
   fullName: string;
-  email: string;
+  mobileNumber: string;
+  email?: string;
   workspaceId: string;
   workspace: {
     id: string;

@@ -19,7 +19,7 @@ import { secureStore } from '../../services/secureStore';
 import { useThemeColors } from '../../theme/colors';
 
 const loginSchema = z.object({
-  email: z.string().email('Invalid email address'),
+  mobileNumber: z.string().regex(/^\+?[1-9]\d{1,14}$/, 'Invalid mobile number format (e.g. +919876543210)'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
 });
 type LoginFormData = z.infer<typeof loginSchema>;
@@ -122,7 +122,7 @@ export function LoginScreen({ navigation }: LoginScreenProps) {
 
   const { control, handleSubmit, formState: { errors } } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { email: '', password: '' },
+    defaultValues: { mobileNumber: '', password: '' },
   });
 
   const handleBiometricLogin = async () => {
@@ -205,15 +205,15 @@ export function LoginScreen({ navigation }: LoginScreenProps) {
 
             <View style={[styles.divider, { backgroundColor: colors.borderLight }]} />
 
-            <Controller control={control} name="email"
+            <Controller control={control} name="mobileNumber"
               render={({ field: { onChange, onBlur, value } }) => (
                 <Input
-                  label="Email Address"
-                  placeholder="you@example.com"
-                  icon="mail-outline"
+                  label="Mobile Number"
+                  placeholder="+919876543210"
+                  icon="call-outline"
                   onBlur={onBlur} onChangeText={onChange} value={value}
-                  autoCapitalize="none" keyboardType="email-address"
-                  error={errors.email?.message}
+                  autoCapitalize="none" keyboardType="phone-pad"
+                  error={errors.mobileNumber?.message}
                 />
               )}
             />
