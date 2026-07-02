@@ -10,18 +10,57 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '../../store/authStore';
 import { axiosClient } from '../../api/axiosClient';
 import { ENDPOINTS } from '../../api/endpoints';
-import { useThemeColors, shadows } from '../../theme/colors';
+import { useThemeColors } from '../../theme/colors';
 import { useNotificationStore } from '../../store/notificationStore';
 import { StatusBadge } from '../../components/StatusBadge';
 import { offlineCache } from '../../services/offlineCache';
 
+// Design System Components
+import { Card } from '../../components/Card';
+import { Typography } from '../../components/Typography';
+import { ChartCard } from '../../components/ChartCard';
+
 interface DashboardScreenProps { navigation: any; }
+
+// ── Smooth Animated Counter for Numbers ──
+function AnimatedCounter({ value, prefix = '', suffix = '' }: { value: number; prefix?: string; suffix?: string }) {
+  const [displayVal, setDisplayVal] = useState(0);
+
+  useEffect(() => {
+    let start = 0;
+    const end = Math.round(value);
+    if (start === end) {
+      setDisplayVal(end);
+      return;
+    }
+
+    const duration = 800; // ms
+    const incrementTime = 30; // ms
+    const stepsCount = Math.floor(duration / incrementTime);
+    let step = 0;
+
+    const timer = setInterval(() => {
+      step++;
+      const currentVal = Math.round((end * step) / stepsCount);
+      if (step >= stepsCount) {
+        clearInterval(timer);
+        setDisplayVal(end);
+      } else {
+        setDisplayVal(currentVal);
+      }
+    }, incrementTime);
+
+    return () => clearInterval(timer);
+  }, [value]);
+
+  return <Text>{prefix}{displayVal.toLocaleString('en-IN')}{suffix}</Text>;
+}
 
 // ── Animated Metric Card ───────────────────────────────────────────
 function MetricCard({
   label, value, icon, color, bg, delay = 0,
 }: {
-  label: string; value: number | string; icon: any;
+  label: string; value: number; icon: any;
   color: string; bg: string; delay?: number;
 }) {
   const scaleAnim = useRef(new Animated.Value(0.85)).current;
@@ -38,54 +77,22 @@ function MetricCard({
 
   return (
     <Animated.View style={[s.metricCard, { opacity: fadeAnim, transform: [{ scale: scaleAnim }] }]}>
-      {/* Left accent stripe */}
-      <View style={[s.metricStripe, { backgroundColor: color }]} />
-      <View style={s.metricBody}>
-        <View style={[s.metricIcon, { backgroundColor: bg }]}>
-          <Ionicons name={icon} size={18} color={color} />
+      <Card noPadding style={s.metricCardInner}>
+        {/* Left accent stripe */}
+        <View style={[s.metricStripe, { backgroundColor: color }]} />
+        <View style={s.metricBody}>
+          <View style={[s.metricIcon, { backgroundColor: bg }]}>
+            <Ionicons name={icon} size={18} color={color} />
+          </View>
+          <Text style={s.metricValue}>
+            <AnimatedCounter value={value} />
+          </Text>
+          <Text style={s.metricLabel}>{label}</Text>
         </View>
-        <Text style={s.metricValue}>{value}</Text>
-        <Text style={s.metricLabel}>{label}</Text>
-      </View>
+      </Card>
     </Animated.View>
   );
 }
-
-// ── Mini Donut Ring ────────────────────────────────────────────────
-function DonutRing({ paid, total, size = 80 }: { paid: number; total: number; size?: number }) {
-  const pct = total > 0 ? Math.min(paid / total, 1) : 0;
-  const stroke = 8;
-  const r = (size - stroke * 2) / 2;
-  const circumference = 2 * Math.PI * r;
-  const colors = useThemeColors();
-  // We simulate a donut using nested circles
-  return (
-    <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
-      {/* Background ring */}
-      <View style={{
-        position: 'absolute', width: size, height: size, borderRadius: size / 2,
-        borderWidth: stroke, borderColor: colors.border,
-      }} />
-      {/* This is a simplified arc using rotation trick */}
-      <View style={{
-        position: 'absolute', width: size, height: size, borderRadius: size / 2,
-        borderWidth: stroke,
-        borderColor: 'transparent',
-        borderTopColor: pct > 0 ? '#10b981' : 'transparent',
-        borderRightColor: pct > 0.25 ? '#10b981' : 'transparent',
-        borderBottomColor: pct > 0.5 ? '#10b981' : 'transparent',
-        borderLeftColor: pct > 0.75 ? '#10b981' : 'transparent',
-        transform: [{ rotate: '-90deg' }],
-      }} />
-        <View style={{ alignItems: 'center' }}>
-          <Text style={{ color: '#10b981', fontWeight: '800', fontSize: 14 }}>
-            {Math.round(pct * 100)}%
-          </Text>
-          <Text style={{ color: colors.textSecondary, fontSize: 9, fontWeight: '600' }}>PAID</Text>
-        </View>
-      </View>
-    );
-  }
 
 // ── Notification icon helper ───────────────────────────────────────
 function getNotifIcon(type: string): { name: any; color: string; bg: string } {
@@ -184,10 +191,6 @@ export function DashboardScreen({ navigation }: DashboardScreenProps) {
   const greeting = now.getHours() < 12 ? 'Good morning' : now.getHours() < 17 ? 'Good afternoon' : 'Good evening';
   const dateLabel = now.toLocaleDateString('en-IN', { weekday: 'long', month: 'long', day: 'numeric' });
 
-  // Revenue ring data from orders
-  const totalRevenue = recentOrders.reduce((s: number, o: any) => s + (o.total || 0), 0);
-  const paidRevenue = recentOrders.reduce((s: number, o: any) => s + (o.paidAmount || 0), 0);
-
   const METRICS = [
     { label: 'Customers', value: stats.totalCustomers, icon: 'people-outline', color: colors.primary, bg: colors.primaryGlow, delay: 0 },
     { label: 'Active Orders', value: stats.activeOrders, icon: 'cube-outline', color: '#a78bfa', bg: '#a78bfa18', delay: 60 },
@@ -195,17 +198,22 @@ export function DashboardScreen({ navigation }: DashboardScreenProps) {
     { label: "Today's Orders", value: stats.todaysOrders, icon: 'today-outline', color: '#f59e0b', bg: '#f59e0b18', delay: 180 },
   ];
 
+  // Dynamic progress parameters for ChartCard
+  const progressChartData = [
+    { label: 'Collections Ratio', value: Math.max(0, (stats.totalRevenue || 0) - (stats.totalOutstanding || 0)), secondaryValue: stats.totalRevenue || 1, color: '#10b981' },
+    { label: 'Order Fulfillment', value: stats.completedOrders || 0, secondaryValue: (stats.activeOrders || 0) + (stats.completedOrders || 0) || 1, color: colors.primary },
+    { label: 'Target Completion', value: stats.completedOrders || 0, secondaryValue: 25, color: '#fbbf24' }
+  ];
+
+  const netProfit = (stats.totalRevenue ?? 0) - (stats.totalExpenses ?? 0);
+
   return (
     <View style={s.screen}>
       {/* ── Header ── */}
       <Animated.View
         style={[s.header, { paddingTop: insets.top > 0 ? insets.top + 10 : 20, opacity: headerFade }]}
       >
-        {/* Hero greeting strip */}
         <View style={s.heroStrip}>
-          <View style={s.heroBg1} />
-          <View style={s.heroBg2} />
-
           <View style={s.heroRow}>
             <TouchableOpacity onPress={() => navigation.navigate('Settings')} activeOpacity={0.8}>
               <View style={s.avatar}>
@@ -246,7 +254,7 @@ export function DashboardScreen({ navigation }: DashboardScreenProps) {
       >
         {/* ── Metrics Grid ── */}
         <View style={s.sectionHeader}>
-          <Text style={s.sectionTitle}>Business Overview</Text>
+          <Text style={s.sectionTitle}>Business Command Center</Text>
         </View>
         <View style={s.metricsGrid}>
           {METRICS.map((m) => (
@@ -254,50 +262,56 @@ export function DashboardScreen({ navigation }: DashboardScreenProps) {
           ))}
         </View>
 
-        {/* ── Financial Overview ── */}
-        <View style={s.revenuePanel}>
-          <View style={s.revenueBg} />
+        {/* ── Financial Overview (Interactive Counters) ── */}
+        <Card style={s.revenuePanel}>
           <View style={s.revenueLeft}>
-            <Text style={s.revenueTitle}>Financial Overview</Text>
-            <Text style={s.revenueTotal}>₹{((stats.totalRevenue ?? 0) - (stats.totalExpenses ?? 0)).toLocaleString('en-IN')}</Text>
+            <Text style={s.revenueTitle}>Net Profit Yield</Text>
+            <Text style={s.revenueTotal}>
+              <AnimatedCounter value={netProfit} prefix="₹" />
+            </Text>
             <View style={s.revenueRow}>
               <View style={[s.revDot, { backgroundColor: '#10b981' }]} />
-              <Text style={s.revLabel}>Total Revenue: ₹{(stats.totalRevenue ?? 0).toLocaleString('en-IN')}</Text>
+              <Text style={s.revLabel}>Total Revenue: <AnimatedCounter value={stats.totalRevenue ?? 0} prefix="₹" /></Text>
             </View>
             <View style={s.revenueRow}>
               <View style={[s.revDot, { backgroundColor: '#ef4444' }]} />
-              <Text style={s.revLabel}>Logged Expenses: ₹{(stats.totalExpenses ?? 0).toLocaleString('en-IN')}</Text>
-            </View>
-            <View style={s.revenueRow}>
-              <View style={[s.revDot, { backgroundColor: colors.primary }]} />
-              <Text style={[s.revLabel, { color: colors.primary, fontWeight: 'bold' }]}>Net Profit: ₹{(stats.netProfit ?? 0).toLocaleString('en-IN')}</Text>
+              <Text style={s.revLabel}>Logged Expenses: <AnimatedCounter value={stats.totalExpenses ?? 0} prefix="₹" /></Text>
             </View>
             <View style={s.revenueRow}>
               <View style={[s.revDot, { backgroundColor: '#f43f5e' }]} />
-              <Text style={[s.revLabel, { color: '#f43f5e', fontWeight: 'bold' }]}>Outstanding Dues: ₹{(stats.totalOutstanding ?? 0).toLocaleString('en-IN')}</Text>
+              <Text style={[s.revLabel, { color: '#f43f5e', fontWeight: 'bold' }]}>Outstanding Dues: <AnimatedCounter value={stats.totalOutstanding ?? 0} prefix="₹" /></Text>
             </View>
           </View>
-          <View style={{ width: 88, height: 88, borderRadius: 44, backgroundColor: colors.primaryGlow, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: colors.primary + '30' }}>
-            <Ionicons name="wallet-outline" size={36} color={colors.primary} />
+          <View style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: colors.primaryGlow, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: colors.borderGlow }}>
+            <Ionicons name="stats-chart" size={32} color={colors.primary} />
           </View>
-        </View>
+        </Card>
+
+        {/* ── Live Key Targets Graph Card ── */}
+        <ChartCard
+          title="Fulfillment & collections"
+          subtitle="Real-time KPI progress metrics"
+          type="progress"
+          data={progressChartData}
+          style={{ marginBottom: 16 }}
+        />
 
         {/* ── Alerts ── */}
         {recentAlerts.length > 0 && (
           <View style={s.section}>
             <View style={s.sectionHeader}>
-              <Text style={s.sectionTitle}>Alerts</Text>
+              <Text style={s.sectionTitle}>System Intelligence Alerts</Text>
               <TouchableOpacity onPress={() => navigation.navigate('Notifications')}>
                 <Text style={s.seeAll}>See all</Text>
               </TouchableOpacity>
             </View>
-            <View style={s.card}>
+            <Card noPadding style={{ overflow: 'hidden' }}>
               {recentAlerts.map((alert: any, idx: number) => {
                 const cfg = getNotifIcon(alert.type);
                 const isUnread = !readIds.includes(alert.id);
                 return (
                   <View key={alert.id} style={[s.alertRow, idx > 0 && s.alertBorder]}>
-                    {isUnread && <View style={s.unreadDot} />}
+                    {isUnread && <View style={[s.unreadDot, { backgroundColor: colors.primary }]} />}
                     <View style={[s.alertIcon, { backgroundColor: cfg.bg }]}>
                       <Ionicons name={cfg.name} size={17} color={cfg.color} />
                     </View>
@@ -311,18 +325,18 @@ export function DashboardScreen({ navigation }: DashboardScreenProps) {
                   </View>
                 );
               })}
-            </View>
+            </Card>
           </View>
         )}
 
-        {/* ── Quick Actions ── */}
+        {/* ── Quick Actions Grid ── */}
         <View style={s.section}>
-          <Text style={[s.sectionTitle, { marginBottom: 12 }]}>Quick Actions</Text>
+          <Text style={[s.sectionTitle, { marginBottom: 12 }]}>Refraction Console Actions</Text>
           <View style={s.quickGrid}>
             {[
-              { label: 'New Cust',         icon: 'person-add-outline', color: colors.primary, screen: 'AddEditCustomer', params: {} },
+              { label: 'Add Cust',         icon: 'person-add-outline', color: colors.primary, screen: 'AddEditCustomer', params: {} },
               { label: 'New Order',        icon: 'cart-outline',        color: '#a78bfa', screen: 'AddOrder',        params: {} },
-              { label: 'Ledger Dues',      icon: 'wallet-outline',      color: colors.info, screen: 'Ledger',          params: {} },
+              { label: 'Ledger Statement', icon: 'wallet-outline',      color: colors.info, screen: 'Ledger',          params: {} },
               { label: 'Receipt Pad',      icon: 'document-text-outline', color: '#f59e0b', screen: 'ReceiptPad',      params: {} },
             ].map((action) => (
               <TouchableOpacity
@@ -343,18 +357,18 @@ export function DashboardScreen({ navigation }: DashboardScreenProps) {
         {/* ── Recent Customers ── */}
         <View style={s.section}>
           <View style={s.sectionHeader}>
-            <Text style={s.sectionTitle}>Recent Customers</Text>
+            <Text style={s.sectionTitle}>Recent Profiles</Text>
             <TouchableOpacity onPress={() => navigation.navigate('Customers')}>
               <Text style={s.seeAll}>View all →</Text>
             </TouchableOpacity>
           </View>
           {recentCustomers.length === 0 ? (
-            <View style={[s.card, s.emptyState]}>
-              <Ionicons name="people-outline" size={28} color="#334155" />
-              <Text style={s.emptyText}>No customers yet</Text>
-            </View>
+            <Card style={s.emptyState}>
+              <Ionicons name="people-outline" size={28} color={colors.textDisabled} />
+              <Text style={s.emptyText}>No customers logged</Text>
+            </Card>
           ) : (
-            <View style={s.card}>
+            <Card noPadding style={{ overflow: 'hidden' }}>
               {recentCustomers.map((cust: any, idx: number) => (
                 <TouchableOpacity
                   key={cust.id}
@@ -370,7 +384,7 @@ export function DashboardScreen({ navigation }: DashboardScreenProps) {
                   <View style={s.listContent}>
                     <Text style={s.listName}>{cust.fullName}</Text>
                     <View style={s.infoRow}>
-                      <Ionicons name="call-outline" size={11} color={colors.textMuted} />
+                      <Ionicons name="call-outline" size={11} color={colors.textMuted} style={{ marginRight: 2 }} />
                       <Text style={s.infoText}>{cust.phone}</Text>
                     </View>
                   </View>
@@ -379,7 +393,7 @@ export function DashboardScreen({ navigation }: DashboardScreenProps) {
                   </Text>
                 </TouchableOpacity>
               ))}
-            </View>
+            </Card>
           )}
         </View>
 
@@ -392,12 +406,12 @@ export function DashboardScreen({ navigation }: DashboardScreenProps) {
             </TouchableOpacity>
           </View>
           {recentOrders.length === 0 ? (
-            <View style={[s.card, s.emptyState]}>
-              <Ionicons name="receipt-outline" size={28} color="#334155" />
-              <Text style={s.emptyText}>No orders yet</Text>
-            </View>
+            <Card style={s.emptyState}>
+              <Ionicons name="receipt-outline" size={28} color={colors.textDisabled} />
+              <Text style={s.emptyText}>No orders registered</Text>
+            </Card>
           ) : (
-            <View style={s.card}>
+            <Card noPadding style={{ overflow: 'hidden' }}>
               {recentOrders.map((order: any, idx: number) => (
                 <TouchableOpacity
                   key={order.id}
@@ -414,7 +428,7 @@ export function DashboardScreen({ navigation }: DashboardScreenProps) {
                       <StatusBadge status={order.status} size="sm" />
                     </View>
                     <View style={s.infoRow}>
-                      <Ionicons name="person-outline" size={11} color={colors.textMuted} />
+                      <Ionicons name="person-outline" size={11} color={colors.textMuted} style={{ marginRight: 2 }} />
                       <Text style={s.infoText}>{order.customer?.fullName}</Text>
                     </View>
                   </View>
@@ -426,25 +440,25 @@ export function DashboardScreen({ navigation }: DashboardScreenProps) {
                   </View>
                 </TouchableOpacity>
               ))}
-            </View>
+            </Card>
           )}
         </View>
 
         {/* ── Top Debtors ── */}
         <View style={s.section}>
           <View style={s.sectionHeader}>
-            <Text style={s.sectionTitle}>Top Debtors (Dues Pending)</Text>
+            <Text style={s.sectionTitle}>Top Debtors</Text>
             <TouchableOpacity onPress={() => navigation.navigate('Ledger')}>
               <Text style={s.seeAll}>View all dues →</Text>
             </TouchableOpacity>
           </View>
           {!dashboardData?.topDebtors || dashboardData.topDebtors.length === 0 ? (
-            <View style={[s.card, s.emptyState]}>
-              <Ionicons name="wallet-outline" size={28} color="#334155" />
-              <Text style={s.emptyText}>No pending customer dues</Text>
-            </View>
+            <Card style={s.emptyState}>
+              <Ionicons name="wallet-outline" size={28} color={colors.textDisabled} />
+              <Text style={s.emptyText}>No outstanding client balances</Text>
+            </Card>
           ) : (
-            <View style={s.card}>
+            <Card noPadding style={{ overflow: 'hidden' }}>
               {dashboardData.topDebtors.map((debtor: any, idx: number) => (
                 <TouchableOpacity
                   key={debtor.id}
@@ -460,7 +474,7 @@ export function DashboardScreen({ navigation }: DashboardScreenProps) {
                   <View style={s.listContent}>
                     <Text style={s.listName}>{debtor.customerName}</Text>
                     <View style={s.infoRow}>
-                      <Ionicons name="call-outline" size={11} color={colors.textMuted} />
+                      <Ionicons name="call-outline" size={11} color={colors.textMuted} style={{ marginRight: 2 }} />
                       <Text style={s.infoText}>{debtor.phone}</Text>
                     </View>
                   </View>
@@ -469,7 +483,7 @@ export function DashboardScreen({ navigation }: DashboardScreenProps) {
                   </Text>
                 </TouchableOpacity>
               ))}
-            </View>
+            </Card>
           )}
         </View>
 
@@ -495,153 +509,108 @@ const getStyles = (colors: any) => StyleSheet.create({
   // ── Header / Hero ──────────────────────────────
   header: { backgroundColor: colors.card, borderBottomWidth: 1, borderBottomColor: colors.border },
   heroStrip: { paddingHorizontal: 20, paddingBottom: 18, overflow: 'hidden' },
-  heroBg1: {
-    position: 'absolute', top: -40, right: -20,
-    width: 180, height: 180, borderRadius: 90,
-    backgroundColor: colors.primary, opacity: 0.06,
-  },
-  heroBg2: {
-    position: 'absolute', bottom: -60, left: -40,
-    width: 160, height: 160, borderRadius: 80,
-    backgroundColor: colors.info, opacity: 0.05,
-  },
-  heroRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
+  heroRow: { flexDirection: 'row', alignItems: 'center', gap: 14, marginTop: 12 },
   avatar: {
-    width: 44, height: 44, borderRadius: 22,
-    backgroundColor: colors.primaryGlow,
-    borderWidth: 2, borderColor: colors.borderGlow,
+    width: 48, height: 48, borderRadius: 24,
+    backgroundColor: colors.primaryGlow, borderWidth: 1.5, borderColor: colors.borderGlow,
     alignItems: 'center', justifyContent: 'center',
-    marginRight: 12,
   },
-  avatarText: { color: colors.primary, fontWeight: '800', fontSize: 15 },
+  avatarText: { color: colors.primary, fontSize: 15, fontWeight: '800' },
   heroTextBlock: { flex: 1 },
-  greetingText: { color: colors.textSecondary, fontSize: 12, fontWeight: '500', marginBottom: 1 },
-  heroName: { color: colors.text, fontSize: 18, fontWeight: '800', letterSpacing: 0.2 },
-  workspaceRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 2 },
+  greetingText: { color: colors.textMuted, fontSize: 11, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5 },
+  heroName: { color: colors.text, fontSize: 18, fontWeight: '800', marginTop: 2 },
+  workspaceRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 3 },
   workspaceName: { color: colors.textSecondary, fontSize: 11 },
-  headerActions: { alignItems: 'flex-end' },
+  headerActions: { flexDirection: 'row', alignItems: 'center' },
   notifBtn: {
-    width: 38, height: 38, borderRadius: 19,
-    backgroundColor: colors.border,
-    alignItems: 'center', justifyContent: 'center',
+    width: 40, height: 40, borderRadius: 20,
+    backgroundColor: colors.cardHover, alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: colors.borderLight, position: 'relative',
   },
   badge: {
     position: 'absolute', top: -3, right: -3,
-    backgroundColor: colors.primary,
-    width: 16, height: 16, borderRadius: 8,
-    alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1.5, borderColor: colors.card,
+    backgroundColor: colors.primary, minWidth: 16, height: 16, borderRadius: 8,
+    alignItems: 'center', justifyContent: 'center', paddingHorizontal: 4,
   },
-  badgeText: { color: '#fff', fontSize: 9, fontWeight: '800' },
-  dateLabel: { color: colors.textSecondary, fontSize: 12, fontWeight: '500' },
+  badgeText: { color: '#fff', fontSize: 9, fontWeight: '900' },
+  dateLabel: { color: colors.textMuted, fontSize: 11, marginTop: 14, fontWeight: '600' },
 
-  // ── Section ────────────────────────────────────
-  section: { marginTop: 24 },
-  sectionHeader: {
-    flexDirection: 'row', justifyContent: 'space-between',
-    alignItems: 'center', marginBottom: 12,
-  },
-  sectionTitle: { color: colors.text, fontSize: 16, fontWeight: '800', letterSpacing: 0.1 },
-  seeAll: { color: colors.primary, fontSize: 12, fontWeight: '600' },
-
-  // ── Metrics ────────────────────────────────────
-  metricsGrid: {
-    flexDirection: 'row', flexWrap: 'wrap',
-    gap: 10, marginTop: 12,
-  },
-  metricCard: {
-    width: '47.5%',
-    backgroundColor: colors.card,
-    borderRadius: 18, borderWidth: 1, borderColor: colors.border,
-    overflow: 'hidden', flexDirection: 'row',
-    ...shadows.cardShadow,
-  },
-  metricStripe: { width: 4, alignSelf: 'stretch' },
-  metricBody: { flex: 1, padding: 14 },
+  // ── Metrics Grid ──────────────────────────────
+  metricsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 16 },
+  metricCard: { width: '48.5%' },
+  metricCardInner: { flex: 1, borderWidth: 1, borderColor: colors.borderLight },
+  metricStripe: { width: 4, height: '100%', position: 'absolute', left: 0, top: 0, bottom: 0 },
+  metricBody: { padding: 14, paddingLeft: 18 },
   metricIcon: {
-    width: 36, height: 36, borderRadius: 11,
-    alignItems: 'center', justifyContent: 'center', marginBottom: 12,
+    width: 32, height: 32, borderRadius: 10,
+    alignItems: 'center', justifyContent: 'center', marginBottom: 10,
   },
-  metricValue: { color: colors.text, fontSize: 26, fontWeight: '800', letterSpacing: -0.5 },
+  metricValue: { color: colors.text, fontSize: 20, fontWeight: '900' },
   metricLabel: { color: colors.textSecondary, fontSize: 11, fontWeight: '600', marginTop: 2 },
 
-  // ── Revenue Panel ──────────────────────────────
+  // ── Financial Panel ────────────────────────────
   revenuePanel: {
-    marginTop: 20, backgroundColor: colors.card,
-    borderRadius: 20, borderWidth: 1, borderColor: colors.border,
-    padding: 20, flexDirection: 'row', alignItems: 'center',
-    justifyContent: 'space-between', overflow: 'hidden',
-    ...shadows.cardShadow,
+    padding: 16, flexDirection: 'row', alignItems: 'center',
+    justifyContent: 'space-between', marginBottom: 16,
+    borderWidth: 1, borderColor: colors.borderLight,
   },
-  revenueBg: {
-    position: 'absolute', top: -30, right: -30,
-    width: 140, height: 140, borderRadius: 70,
-    backgroundColor: colors.success, opacity: 0.06,
-  },
-  revenueLeft: { flex: 1, marginRight: 16 },
-  revenueTitle: { color: colors.textSecondary, fontSize: 11, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5 },
-  revenueTotal: { color: colors.text, fontSize: 28, fontWeight: '800', marginTop: 4, marginBottom: 8 },
-  revenueRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 4 },
-  revDot: { width: 7, height: 7, borderRadius: 4, backgroundColor: colors.success },
-  revLabel: { color: colors.textSecondary, fontSize: 12 },
+  revenueLeft: { flex: 1 },
+  revenueTitle: { color: colors.textSecondary, fontSize: 11, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.2 },
+  revenueTotal: { color: colors.text, fontSize: 24, fontWeight: '900', marginTop: 4, marginBottom: 8 },
+  revenueRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4 },
+  revDot: { width: 6, height: 6, borderRadius: 3 },
+  revLabel: { color: colors.textSecondary, fontSize: 11 },
 
-  // ── Alerts ─────────────────────────────────────
-  card: {
-    backgroundColor: colors.card, borderRadius: 18,
-    borderWidth: 1, borderColor: colors.border,
-    overflow: 'hidden', ...shadows.cardShadow,
-  },
-  alertRow: { flexDirection: 'row', alignItems: 'flex-start', padding: 14 },
-  alertBorder: { borderTopWidth: 1, borderTopColor: colors.border },
-  unreadDot: {
-    position: 'absolute', top: 18, left: 6,
-    width: 6, height: 6, borderRadius: 3, backgroundColor: colors.primary,
-  },
-  alertIcon: {
-    width: 38, height: 38, borderRadius: 12,
-    alignItems: 'center', justifyContent: 'center', marginRight: 12,
-  },
+  // ── Sections ───────────────────────────────────
+  section: { marginBottom: 16 },
+  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 10 },
+  sectionTitle: { color: colors.text, fontSize: 15, fontWeight: '800', letterSpacing: 0.1 },
+  seeAll: { color: colors.primary, fontSize: 12, fontWeight: '700' },
+  card: { borderWidth: 1, borderColor: colors.borderLight },
+  emptyState: { paddingVertical: 32, alignItems: 'center', justifyContent: 'center' },
+  emptyText: { color: colors.textMuted, fontSize: 12, marginTop: 8 },
+
+  // ── Alert Row ──────────────────────────────────
+  alertRow: { flexDirection: 'row', padding: 12, alignItems: 'center', position: 'relative' },
+  alertBorder: { borderTopWidth: 1, borderTopColor: colors.borderLight },
+  unreadDot: { position: 'absolute', left: 8, top: '50%', marginTop: -3, width: 6, height: 6, borderRadius: 3 },
+  alertIcon: { width: 34, height: 34, borderRadius: 10, alignItems: 'center', justifyContent: 'center', marginRight: 12 },
   alertContent: { flex: 1 },
   alertTitle: { color: colors.text, fontSize: 13, fontWeight: '700' },
-  alertMsg: { color: colors.textSecondary, fontSize: 12, marginTop: 3, lineHeight: 17 },
-  alertTime: { color: colors.textMuted, fontSize: 10, marginTop: 4, fontWeight: '500' },
+  alertMsg: { color: colors.textSecondary, fontSize: 11, marginTop: 2, lineHeight: 15 },
+  alertTime: { color: colors.textMuted, fontSize: 9, marginTop: 4, fontWeight: '600' },
 
   // ── Quick Actions ──────────────────────────────
-  quickGrid: { flexDirection: 'row', gap: 10 },
-  quickBtn: {
-    flex: 1, backgroundColor: colors.card,
-    borderRadius: 16, borderWidth: 1, borderColor: colors.border,
-    padding: 14, alignItems: 'center',
-    ...shadows.cardShadow,
-  },
+  quickGrid: { flexDirection: 'row', gap: 10, marginBottom: 12 },
+  quickBtn: { flex: 1, alignItems: 'center' },
   quickIcon: {
-    width: 44, height: 44, borderRadius: 14,
+    width: 48, height: 48, borderRadius: 14,
     alignItems: 'center', justifyContent: 'center', marginBottom: 8,
+    borderWidth: 1.2, borderColor: colors.borderLight,
   },
-  quickLabel: { color: colors.textSecondary, fontSize: 10, fontWeight: '600', textAlign: 'center' },
+  quickLabel: { color: colors.textSecondary, fontSize: 10, fontWeight: '700', textAlign: 'center' },
 
-  // ── List rows ──────────────────────────────────
-  listRow: { flexDirection: 'row', alignItems: 'center', padding: 14 },
-  listBorder: { borderTopWidth: 1, borderTopColor: colors.border },
+  // ── List Row (Customers & Orders) ──────────────
+  listRow: { flexDirection: 'row', padding: 12, alignItems: 'center' },
+  listBorder: { borderTopWidth: 1, borderTopColor: colors.borderLight },
   custAvatar: {
     width: 38, height: 38, borderRadius: 19,
-    backgroundColor: colors.primaryGlow, borderWidth: 1.5, borderColor: colors.borderGlow,
+    backgroundColor: colors.primaryGlow, borderWidth: 1, borderColor: colors.borderGlow,
     alignItems: 'center', justifyContent: 'center', marginRight: 12,
   },
-  custAvatarText: { color: colors.primary, fontWeight: '800', fontSize: 12 },
-  orderIcon: {
-    width: 38, height: 38, borderRadius: 19,
-    backgroundColor: colors.purpleGlow, borderWidth: 1.5, borderColor: colors.purpleGlow,
-    alignItems: 'center', justifyContent: 'center', marginRight: 12,
-  },
+  custAvatarText: { color: colors.primary, fontSize: 13, fontWeight: '800' },
   listContent: { flex: 1 },
-  listName: { color: colors.text, fontWeight: '700', fontSize: 14 },
+  listName: { color: colors.text, fontSize: 13, fontWeight: '700' },
   infoRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 3 },
-  infoText: { color: colors.textSecondary, fontSize: 12 },
-  orderTopRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  infoText: { color: colors.textSecondary, fontSize: 11 },
+  timeAgo: { color: colors.textMuted, fontSize: 9, fontWeight: '600' },
+
+  orderIcon: {
+    width: 34, height: 34, borderRadius: 10,
+    backgroundColor: '#a78bfa18', alignItems: 'center', justifyContent: 'center', marginRight: 12,
+    borderWidth: 1, borderColor: '#a78bfa25',
+  },
+  orderTopRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   orderAmountCol: { alignItems: 'flex-end' },
-  orderAmount: { color: colors.text, fontWeight: '700', fontSize: 14 },
-  timeAgo: { color: colors.textMuted, fontSize: 10, marginTop: 3 },
-  emptyState: { alignItems: 'center', padding: 30 },
-  emptyText: { color: colors.textMuted, fontSize: 13, marginTop: 10 },
+  orderAmount: { color: colors.text, fontSize: 13, fontWeight: '700' },
 });

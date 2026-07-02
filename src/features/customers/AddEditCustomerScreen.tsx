@@ -52,9 +52,9 @@ interface AddEditCustomerScreenProps {
 function TagSelector({ selectedTags, onToggle }: { selectedTags: string[]; onToggle: (t: string) => void }) {
   const colors = useThemeColors();
   return (
-    <View className="mb-5">
+    <View className="mb-1">
       <Text className="text-textSecondary text-xs font-semibold uppercase tracking-wider mb-2">
-        Customer Tags
+        Select Customer Tags
       </Text>
       <View className="flex-row flex-wrap" style={{ gap: 8 }}>
         {PREDEFINED_TAGS.map((tag) => {
@@ -66,7 +66,7 @@ function TagSelector({ selectedTags, onToggle }: { selectedTags: string[]; onTog
               className="flex-row items-center px-3 py-1.5 rounded-full border"
               style={{
                 backgroundColor: active ? tag.bg : 'transparent',
-                borderColor: active ? tag.color : colors.border,
+                borderColor: active ? tag.color : colors.borderLight,
               }}
             >
               {active && (
@@ -100,6 +100,7 @@ function FamilyMemberPicker({
   selfId?: string;
 }) {
   const colors = useThemeColors();
+  const insets = useSafeAreaInsets();
   const [searchVisible, setSearchVisible] = useState(false);
   const [query, setQuery] = useState('');
 
@@ -110,28 +111,29 @@ function FamilyMemberPicker({
   const selectedName = workspaceCustomers.find((c) => c.id === selectedId)?.fullName;
 
   return (
-    <View className="mb-5">
+    <View className="mb-1">
       <Text className="text-textSecondary text-xs font-semibold uppercase tracking-wider mb-2">
-        Link Primary Family Member
+        Link Family Member
       </Text>
 
       {/* Member pick button */}
       <TouchableOpacity
         onPress={() => setSearchVisible(true)}
-        className="bg-card border border-border rounded-xl px-4 py-3 flex-row items-center justify-between"
+        className="bg-card border rounded-xl px-4 py-3 flex-row items-center justify-between"
+        style={{ borderColor: colors.borderLight }}
       >
         <View className="flex-row items-center">
-          <Ionicons name="people-outline" size={16} color={colors.textSecondary} />
-          <Text className={`ml-2 text-sm ${selectedId ? 'text-text' : 'text-textMuted'}`}>
+          <Ionicons name="people-outline" size={16} color={colors.textMuted} />
+          <Text className="ml-2 text-sm" style={{ color: selectedId ? colors.text : colors.textMuted }}>
             {selectedId ? selectedName : 'Select family member...'}
           </Text>
         </View>
         {selectedId ? (
           <TouchableOpacity onPress={() => onSelectMember('', '')}>
-            <Ionicons name="close-circle" size={16} color={colors.textSecondary} />
+            <Ionicons name="close-circle" size={16} color={colors.textMuted} />
           </TouchableOpacity>
         ) : (
-          <Ionicons name="chevron-down" size={16} color={colors.textSecondary} />
+          <Ionicons name="chevron-down" size={16} color={colors.textMuted} />
         )}
       </TouchableOpacity>
 
@@ -146,11 +148,11 @@ function FamilyMemberPicker({
                 onPress={() => onSelectRelation(rel)}
                 className="px-3 py-1 rounded-full border"
                 style={{
-                  backgroundColor: active ? '#a78bfa15' : 'transparent',
-                  borderColor: active ? '#a78bfa' : colors.border,
+                  backgroundColor: active ? colors.primaryGlow : 'transparent',
+                  borderColor: active ? colors.primary : colors.borderLight,
                 }}
               >
-                <Text className="text-xs font-semibold" style={{ color: active ? '#a78bfa' : colors.textSecondary }}>
+                <Text className="text-xs font-semibold" style={{ color: active ? colors.primary : colors.textSecondary }}>
                   {rel}
                 </Text>
               </TouchableOpacity>
@@ -161,21 +163,22 @@ function FamilyMemberPicker({
 
       {/* Search Modal */}
       <Modal visible={searchVisible} animationType="slide" transparent>
-        <View className="flex-1 justify-end" style={{ backgroundColor: 'rgba(0,0,0,0.6)' }}>
-          <View className="bg-card rounded-t-3xl" style={{ maxHeight: '70%' }}>
-            <View className="px-4 pt-4 pb-3 border-b border-border">
+        <View className="flex-1 justify-end" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <View style={{ backgroundColor: colors.card, borderTopLeftRadius: 24, borderTopRightRadius: 24, borderTopWidth: 1, borderColor: colors.borderLight, maxHeight: '70%', paddingBottom: insets.bottom + 16 }}>
+            <View className="px-4 pt-4 pb-3 border-b border-borderLight" style={{ borderColor: colors.borderLight }}>
               <View className="flex-row items-center justify-between mb-3">
-                <Text className="text-text font-bold text-base">Select Family Member</Text>
+                <Text className="text-text font-bold text-base" style={{ color: colors.text }}>Select Family Member</Text>
                 <TouchableOpacity onPress={() => setSearchVisible(false)}>
                   <Ionicons name="close" size={22} color={colors.textSecondary} />
                 </TouchableOpacity>
               </View>
-              <View className="bg-card border border-border rounded-xl px-3 py-2 flex-row items-center">
-                <Ionicons name="search-outline" size={16} color={colors.textSecondary} />
+              <View className="bg-card border rounded-xl px-3 py-2 flex-row items-center" style={{ borderColor: colors.borderLight }}>
+                <Ionicons name="search-outline" size={16} color={colors.textMuted} />
                 <TextInput
                   className="flex-1 text-text text-sm ml-2"
+                  style={{ color: colors.text }}
                   placeholder="Search name..."
-                  placeholderTextColor={colors.textSecondary}
+                  placeholderTextColor={colors.textMuted}
                   value={query}
                   onChangeText={setQuery}
                   autoFocus
@@ -188,7 +191,8 @@ function FamilyMemberPicker({
               contentContainerStyle={{ padding: 12 }}
               renderItem={({ item }) => (
                 <TouchableOpacity
-                  className="flex-row items-center bg-card border border-border rounded-xl px-4 py-3 mb-2"
+                  className="flex-row items-center bg-card border rounded-xl px-4 py-3 mb-2"
+                  style={{ borderColor: colors.borderLight }}
                   onPress={() => {
                     onSelectMember(item.id, item.fullName);
                     setSearchVisible(false);
@@ -201,14 +205,14 @@ function FamilyMemberPicker({
                     </Text>
                   </View>
                   <View>
-                    <Text className="text-text font-semibold text-sm">{item.fullName}</Text>
-                    <Text className="text-textMuted text-xs mt-0.5">{item.phone}</Text>
+                    <Text className="text-text font-semibold text-sm" style={{ color: colors.text }}>{item.fullName}</Text>
+                    <Text className="text-textMuted text-xs mt-0.5" style={{ color: colors.textSecondary }}>{item.phone}</Text>
                   </View>
                 </TouchableOpacity>
               )}
               ListEmptyComponent={
                 <View className="items-center py-10">
-                  <Text className="text-textMuted text-sm">No customers found</Text>
+                  <Text className="text-textMuted text-sm" style={{ color: colors.textSecondary }}>No customers found</Text>
                 </View>
               }
             />
@@ -308,7 +312,7 @@ export function AddEditCustomerScreen({ route, navigation }: AddEditCustomerScre
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{ flex: 1, backgroundColor: colors.background }}
+      style={{ flex: 1, backgroundColor: colors.backgroundSolid }}
     >
       {/* Header */}
       <View
@@ -317,14 +321,14 @@ export function AddEditCustomerScreen({ route, navigation }: AddEditCustomerScre
       >
         <TouchableOpacity
           onPress={() => navigation.goBack()}
-          className="w-9 h-9 rounded-full bg-border items-center justify-center"
+          className="w-9 h-9 rounded-full bg-borderLight items-center justify-center"
         >
           <Ionicons name="close" size={18} color={colors.textSecondary} />
         </TouchableOpacity>
 
         <View className="flex-row items-center">
-          <Ionicons name="person-outline" size={15} color="#6366f1" />
-          <Text className="text-text text-base font-bold ml-2">
+          <Ionicons name="person-outline" size={15} color={colors.primary} />
+          <Text className="text-text text-base font-bold ml-2" style={{ color: colors.text }}>
             {isEdit ? 'Edit Customer' : 'Add Customer'}
           </Text>
         </View>
@@ -334,12 +338,12 @@ export function AddEditCustomerScreen({ route, navigation }: AddEditCustomerScre
 
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 48 }}>
         {/* ── Core Info ── */}
-        <View className="bg-card border border-border rounded-2xl p-4 mb-4">
+        <View className="bg-card border rounded-2xl p-4 mb-4" style={{ borderColor: colors.borderLight }}>
           <View className="flex-row items-center mb-4">
-            <View className="w-7 h-7 rounded-full bg-primary/10 items-center justify-center mr-2">
-              <Ionicons name="person-outline" size={14} color="#6366f1" />
+            <View style={{ backgroundColor: colors.primaryGlow }} className="w-7 h-7 rounded-full items-center justify-center mr-2">
+              <Ionicons name="person-outline" size={14} color={colors.primary} />
             </View>
-            <Text className="text-text font-bold text-sm">Basic Information</Text>
+            <Text className="text-text font-bold text-sm" style={{ color: colors.text }}>Basic Information</Text>
           </View>
 
           <Controller control={control} name="fullName"
@@ -392,11 +396,11 @@ export function AddEditCustomerScreen({ route, navigation }: AddEditCustomerScre
                         onPress={() => onChange(active ? '' : g)}
                         className="flex-1 items-center py-2 rounded-xl border"
                         style={{
-                          backgroundColor: active ? '#4f46e515' : 'transparent',
-                          borderColor: active ? '#6366f1' : colors.border,
+                          backgroundColor: active ? colors.primaryGlow : 'transparent',
+                          borderColor: active ? colors.primary : colors.borderLight,
                         }}
                       >
-                        <Text className="text-xs font-semibold" style={{ color: active ? '#6366f1' : colors.textSecondary }}>
+                        <Text className="text-xs font-semibold" style={{ color: active ? colors.primary : colors.textSecondary }}>
                           {g}
                         </Text>
                       </TouchableOpacity>
@@ -417,23 +421,23 @@ export function AddEditCustomerScreen({ route, navigation }: AddEditCustomerScre
         </View>
 
         {/* ── Tags ── */}
-        <View className="bg-card border border-border rounded-2xl p-4 mb-4">
+        <View className="bg-card border rounded-2xl p-4 mb-4" style={{ borderColor: colors.borderLight }}>
           <View className="flex-row items-center mb-4">
             <View className="w-7 h-7 rounded-full bg-[#eab308]/10 items-center justify-center mr-2">
               <Ionicons name="pricetag-outline" size={14} color="#eab308" />
             </View>
-            <Text className="text-text font-bold text-sm">Customer Tags</Text>
+            <Text className="text-text font-bold text-sm" style={{ color: colors.text }}>Customer Tags</Text>
           </View>
           <TagSelector selectedTags={selectedTags} onToggle={toggleTag} />
         </View>
 
         {/* ── Family Member ── */}
-        <View className="bg-card border border-border rounded-2xl p-4 mb-4">
+        <View className="bg-card border rounded-2xl p-4 mb-4" style={{ borderColor: colors.borderLight }}>
           <View className="flex-row items-center mb-4">
             <View className="w-7 h-7 rounded-full bg-[#a78bfa]/10 items-center justify-center mr-2">
               <Ionicons name="people-outline" size={14} color="#a78bfa" />
             </View>
-            <Text className="text-text font-bold text-sm">Household / Family Link</Text>
+            <Text className="text-text font-bold text-sm" style={{ color: colors.text }}>Household / Family Link</Text>
           </View>
           <FamilyMemberPicker
             workspaceCustomers={allCustomers}
@@ -450,12 +454,12 @@ export function AddEditCustomerScreen({ route, navigation }: AddEditCustomerScre
         </View>
 
         {/* ── Notes ── */}
-        <View className="bg-card border border-border rounded-2xl p-4 mb-4">
+        <View className="bg-card border rounded-2xl p-4 mb-4" style={{ borderColor: colors.borderLight }}>
           <View className="flex-row items-center mb-4">
             <View className="w-7 h-7 rounded-full bg-[#10b981]/10 items-center justify-center mr-2">
               <Ionicons name="document-text-outline" size={14} color="#10b981" />
             </View>
-            <Text className="text-text font-bold text-sm">Clinical Notes</Text>
+            <Text className="text-text font-bold text-sm" style={{ color: colors.text }}>Clinical Notes</Text>
           </View>
           <Controller control={control} name="notes"
             render={({ field: { onChange, onBlur, value } }) => (
