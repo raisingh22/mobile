@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import {
   View, Text, TextInput, TextInputProps,
-  Animated, StyleSheet,
+  Animated, StyleSheet, TouchableOpacity,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -12,6 +12,7 @@ interface InputProps extends TextInputProps {
   error?: string;
   icon?: keyof typeof Ionicons.glyphMap;
   iconRight?: keyof typeof Ionicons.glyphMap;
+  onIconRightPress?: () => void;
   hint?: string;
 }
 
@@ -20,6 +21,7 @@ export function Input({
   error,
   icon,
   iconRight,
+  onIconRightPress,
   hint,
   ...props
 }: InputProps) {
@@ -94,7 +96,13 @@ export function Input({
         />
 
         {iconRight ? (
-          <Ionicons name={iconRight} size={17} color={colors.textMuted} style={styles.iconRight} />
+          onIconRightPress ? (
+            <TouchableOpacity onPress={onIconRightPress} style={styles.iconRightBtn} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+              <Ionicons name={iconRight} size={17} color={colors.textMuted} />
+            </TouchableOpacity>
+          ) : (
+            <Ionicons name={iconRight} size={17} color={colors.textMuted} style={styles.iconRight} />
+          )
         ) : null}
       </Animated.View>
 
@@ -113,28 +121,28 @@ export function Input({
 const styles = StyleSheet.create({
   wrapper: { marginBottom: 16 },
   label: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '600',
     marginBottom: 6,
-    letterSpacing: 0.5,
-    textTransform: 'uppercase',
+    letterSpacing: 0.1,
   },
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1.5,
-    borderRadius: 14,
+    borderWidth: 1.2,
+    borderRadius: 12,
     paddingHorizontal: 14,
     shadowOffset: { width: 0, height: 0 },
-    shadowRadius: 8,
+    shadowRadius: 6,
     elevation: 0,
   },
   iconLeft: { marginRight: 10 },
   iconRight: { marginLeft: 8 },
+  iconRightBtn: { marginLeft: 8, padding: 2 },
   input: {
     flex: 1,
     fontSize: 15,
-    paddingVertical: 13,
+    paddingVertical: 11,
     fontWeight: '400',
   },
   inputWithIcon: { paddingLeft: 0 },

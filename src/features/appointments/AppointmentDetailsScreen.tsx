@@ -10,7 +10,7 @@ import { colors } from '../../theme/colors';
 import { CommunicationService } from '../../services/CommunicationService';
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: any }> = {
-  SCHEDULED:   { label: 'Scheduled',   color: '#06b6d4', bg: '#06b6d418', icon: 'time-outline' },
+  SCHEDULED:   { label: 'Scheduled',   color: '#6366f1', bg: '#6366f118', icon: 'time-outline' },
   CONFIRMED:   { label: 'Confirmed',   color: '#10b981', bg: '#10b98118', icon: 'checkmark-circle-outline' },
   ARRIVED:     { label: 'Arrived',     color: '#059669', bg: '#05966918', icon: 'enter-outline' },
   IN_PROGRESS: { label: 'In Progress', color: '#8b5cf6', bg: '#8b5cf618', icon: 'play-outline' },
@@ -145,7 +145,7 @@ export function AppointmentDetailsScreen({ route, navigation }: AppointmentDetai
           onPress={() => navigation.goBack()}
           className="w-9 h-9 rounded-full bg-border items-center justify-center"
         >
-          <Ionicons name="arrow-back" size={20} color="#06b6d4" />
+          <Ionicons name="arrow-back" size={20} color="#6366f1" />
         </TouchableOpacity>
         <Text className="text-text font-bold text-base">Appointment</Text>
         <View className="flex-row items-center">
@@ -153,7 +153,7 @@ export function AppointmentDetailsScreen({ route, navigation }: AppointmentDetai
             onPress={() => navigation.navigate('AddEditAppointment', { appointment })}
             className="w-9 h-9 rounded-full bg-border items-center justify-center mr-2"
           >
-            <Ionicons name="create-outline" size={19} color="#06b6d4" />
+            <Ionicons name="create-outline" size={19} color="#6366f1" />
           </TouchableOpacity>
           <TouchableOpacity
             onPress={handleDelete}
@@ -231,8 +231,8 @@ export function AppointmentDetailsScreen({ route, navigation }: AppointmentDetai
             className="px-5 py-4 flex-row items-center"
             onPress={() => navigation.navigate('CustomerDetails', { customerId: appointment.customerId })}
           >
-            <View className="w-11 h-11 rounded-full bg-[#06b6d4]/10 border-2 border-[#06b6d4]/30 items-center justify-center mr-3">
-              <Text className="text-[#06b6d4] font-bold">
+            <View className="w-11 h-11 rounded-full bg-primary/10 border-2 border-primary/30 items-center justify-center mr-3">
+              <Text className="text-primary font-bold">
                 {appointment.customer?.fullName?.slice(0, 2).toUpperCase()}
               </Text>
             </View>
@@ -308,11 +308,11 @@ export function AppointmentDetailsScreen({ route, navigation }: AppointmentDetai
         {/* View patient prescriptions shortcut */}
         <TouchableOpacity
           onPress={() => navigation.navigate('CustomerDetails', { customerId: appointment.customerId })}
-          className="bg-card border border-[#06b6d4]/30 rounded-xl px-4 py-3 flex-row items-center mb-6"
+          className="bg-card border border-primary/30 rounded-xl px-4 py-3 flex-row items-center mb-6"
         >
-          <Ionicons name="eye-outline" size={16} color="#06b6d4" style={{ marginRight: 12 }} />
-          <Text className="text-[#06b6d4] font-semibold text-sm">View Patient Profile & History</Text>
-          <Ionicons name="chevron-forward" size={16} color="#06b6d4" style={{ marginLeft: 'auto' }} />
+          <Ionicons name="eye-outline" size={16} color="#6366f1" style={{ marginRight: 12 }} />
+          <Text className="text-primary font-semibold text-sm">View Patient Profile & History</Text>
+          <Ionicons name="chevron-forward" size={16} color="#6366f1" style={{ marginLeft: 'auto' }} />
         </TouchableOpacity>
 
         {/* Communication Actions */}
@@ -323,7 +323,7 @@ export function AppointmentDetailsScreen({ route, navigation }: AppointmentDetai
             <Text className="text-text text-sm font-medium">Send WhatsApp Reminder</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleSMSReminder} className="flex-row items-center py-2.5">
-            <Ionicons name="chatbubble-outline" size={20} color="#06b6d4" className="mr-3" />
+            <Ionicons name="chatbubble-outline" size={20} color="#6366f1" className="mr-3" />
             <Text className="text-text text-sm font-medium">Send SMS Reminder</Text>
           </TouchableOpacity>
         </View>

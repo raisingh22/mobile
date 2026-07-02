@@ -123,7 +123,7 @@ function VisualLensPreview({ eye, sph, cyl, axis, setValue, axisFieldName }: Vis
     <View className="items-center bg-background rounded-2xl p-4 border border-border mb-4">
       <Text
         className="text-[11px] font-bold tracking-widest mb-1"
-        style={{ color: isRight ? '#06b6d4' : '#a78bfa' }}
+        style={{ color: isRight ? '#6366f1' : '#a78bfa' }}
       >
         {isRight ? 'RIGHT EYE (OD) LENS' : 'LEFT EYE (OS) LENS'}
       </Text>
@@ -137,8 +137,8 @@ function VisualLensPreview({ eye, sph, cyl, axis, setValue, axisFieldName }: Vis
         className="w-28 h-28 rounded-full items-center justify-center bg-card relative overflow-hidden"
         style={{
           borderWidth: 2,
-          borderColor: isRight ? '#06b6d4' : '#a78bfa',
-          shadowColor: isRight ? '#06b6d4' : '#a78bfa',
+          borderColor: isRight ? '#6366f1' : '#a78bfa',
+          shadowColor: isRight ? '#6366f1' : '#a78bfa',
           shadowOpacity: 0.25,
           shadowRadius: 8,
           shadowOffset: { width: 0, height: 0 },
@@ -171,7 +171,7 @@ function VisualLensPreview({ eye, sph, cyl, axis, setValue, axisFieldName }: Vis
             position: 'absolute',
             width: '80%',
             height: 2.5,
-            backgroundColor: isRight ? '#06b6d4' : '#a78bfa',
+            backgroundColor: isRight ? '#6366f1' : '#a78bfa',
             borderRadius: 1.25,
             transform: [{ rotate: `${rotation}deg` }],
             opacity: hasAstigmatism ? 0.9 : 0.12,
@@ -194,7 +194,7 @@ function VisualLensPreview({ eye, sph, cyl, axis, setValue, axisFieldName }: Vis
 
         <View
           className="w-3.5 h-3.5 rounded-full border-2 border-white absolute"
-          style={{ backgroundColor: isRight ? '#06b6d4' : '#a78bfa' }}
+          style={{ backgroundColor: isRight ? '#6366f1' : '#a78bfa' }}
         />
       </View>
 
@@ -327,7 +327,7 @@ export function AddEditPrescriptionScreen({ route, navigation }: AddEditPrescrip
         style={{ paddingTop: insets.top > 0 ? insets.top + 8 : 16 }}
       >
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text className="text-[#06b6d4] text-sm font-semibold">Cancel</Text>
+          <Text className="text-primary text-sm font-semibold">Cancel</Text>
         </TouchableOpacity>
         <Text className="text-text text-base font-bold">{isEdit ? 'Edit Prescription' : 'Add Prescription'}</Text>
         <View style={{ width: 50 }} />
@@ -442,7 +442,7 @@ export function AddEditPrescriptionScreen({ route, navigation }: AddEditPrescrip
           onPress={copyODtoOS}
           className="bg-card border border-primary/40 rounded-xl py-3 items-center mb-6 flex-row justify-center"
         >
-          <Text className="text-[#06b6d4] text-xs font-bold uppercase tracking-wider">
+          <Text className="text-primary text-xs font-bold uppercase tracking-wider">
             Copy Right Eye (OD) ➡️ Left Eye (OS)
           </Text>
         </TouchableOpacity>
@@ -553,7 +553,7 @@ export function AddEditPrescriptionScreen({ route, navigation }: AddEditPrescrip
         </View>
 
         <TouchableOpacity
-          className="bg-[#06b6d4] rounded-lg py-3.5 items-center flex-row justify-center"
+          className="bg-primary rounded-lg py-3.5 items-center flex-row justify-center"
           onPress={handleSubmit(onSubmit)}
           disabled={isSubmitting}
         >

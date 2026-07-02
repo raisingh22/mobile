@@ -15,6 +15,7 @@ import { ENDPOINTS } from './src/api/endpoints';
 import { AppNavigator } from './src/navigation/AppNavigator';
 import { colors, lightColors, darkColors } from './src/theme/colors';
 import { OfflineBanner } from './src/components/OfflineBanner';
+import { toastConfig } from './src/components/ToastConfig';
 
 const queryClient = new QueryClient();
 
@@ -87,7 +88,7 @@ export default function App() {
             <AppNavigator />
           </NavigationContainer>
         </View>
-        <Toast />
+        <Toast config={toastConfig} />
       </SafeAreaProvider>
     </QueryClientProvider>
   );

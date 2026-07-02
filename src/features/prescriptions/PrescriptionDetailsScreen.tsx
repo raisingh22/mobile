@@ -47,16 +47,16 @@ function VisualEyeCard({ eye, sph, cyl, axis, add }: VisualLensProps) {
       {/* Eye label strip */}
       <View
         className="px-4 py-2.5 flex-row items-center"
-        style={{ backgroundColor: isRight ? '#06b6d4' + '18' : '#a78bfa' + '18', borderBottomWidth: 1, borderBottomColor: '#1f2937' }}
+        style={{ backgroundColor: isRight ? '#6366f1' + '18' : '#a78bfa' + '18', borderBottomWidth: 1, borderBottomColor: '#1f2937' }}
       >
         <Ionicons
           name="eye-outline"
           size={13}
-          color={isRight ? '#06b6d4' : '#a78bfa'}
+          color={isRight ? '#6366f1' : '#a78bfa'}
         />
         <Text
           className="text-[11px] font-bold tracking-widest ml-1.5"
-          style={{ color: isRight ? '#06b6d4' : '#a78bfa' }}
+          style={{ color: isRight ? '#6366f1' : '#a78bfa' }}
         >
           {isRight ? 'RIGHT EYE (OD)' : 'LEFT EYE (OS)'}
         </Text>
@@ -68,8 +68,8 @@ function VisualEyeCard({ eye, sph, cyl, axis, add }: VisualLensProps) {
           className="w-[88px] h-[88px] rounded-full bg-background items-center justify-center relative"
           style={{
             borderWidth: 2,
-            borderColor: isRight ? '#06b6d4' : '#a78bfa',
-            shadowColor: isRight ? '#06b6d4' : '#a78bfa',
+            borderColor: isRight ? '#6366f1' : '#a78bfa',
+            shadowColor: isRight ? '#6366f1' : '#a78bfa',
             shadowOpacity: 0.25,
             shadowRadius: 8,
             shadowOffset: { width: 0, height: 0 },
@@ -101,7 +101,7 @@ function VisualEyeCard({ eye, sph, cyl, axis, add }: VisualLensProps) {
               position: 'absolute',
               width: '80%',
               height: 2,
-              backgroundColor: isRight ? '#06b6d4' : '#a78bfa',
+              backgroundColor: isRight ? '#6366f1' : '#a78bfa',
               borderRadius: 1,
               transform: [{ rotate: `${rotation}deg` }],
               opacity: hasAstigmatism ? 0.9 : 0.12,
@@ -126,7 +126,7 @@ function VisualEyeCard({ eye, sph, cyl, axis, add }: VisualLensProps) {
           {/* Centre dot */}
           <View
             className="w-3 h-3 rounded-full border-2 border-white absolute"
-            style={{ backgroundColor: isRight ? '#06b6d4' : '#a78bfa' }}
+            style={{ backgroundColor: isRight ? '#6366f1' : '#a78bfa' }}
           />
         </View>
 
@@ -249,8 +249,8 @@ export function PrescriptionDetailsScreen({ route, navigation }: PrescriptionDet
   if (isLoading) {
     return (
       <View style={{ flex: 1, backgroundColor: colors.background }} className="justify-center items-center">
-        <View className="w-16 h-16 rounded-full bg-[#06b6d4]/10 items-center justify-center mb-4">
-          <Ionicons name="eye-outline" size={30} color="#06b6d4" />
+        <View className="w-16 h-16 rounded-full bg-primary/10 items-center justify-center mb-4">
+          <Ionicons name="eye-outline" size={30} color="#6366f1" />
         </View>
         <ActivityIndicator size="large" color={colors.primary} />
         <Text className="text-textMuted mt-4 text-sm">Loading prescription...</Text>
@@ -266,7 +266,7 @@ export function PrescriptionDetailsScreen({ route, navigation }: PrescriptionDet
         </View>
         <Text className="text-text font-bold text-base mb-2">Prescription Not Found</Text>
         <Text className="text-textSecondary text-sm text-center mb-5">This prescription record may have been removed.</Text>
-        <TouchableOpacity onPress={() => navigation.goBack()} className="bg-[#06b6d4] px-5 py-2.5 rounded-xl">
+        <TouchableOpacity onPress={() => navigation.goBack()} className="bg-primary px-5 py-2.5 rounded-xl">
           <Text className="text-white font-bold">Go Back</Text>
         </TouchableOpacity>
       </View>
@@ -284,11 +284,11 @@ export function PrescriptionDetailsScreen({ route, navigation }: PrescriptionDet
           onPress={() => navigation.goBack()}
           className="w-9 h-9 rounded-full bg-border items-center justify-center"
         >
-          <Ionicons name="arrow-back" size={20} color="#06b6d4" />
+          <Ionicons name="arrow-back" size={20} color="#6366f1" />
         </TouchableOpacity>
 
         <View className="flex-row items-center">
-          <Ionicons name="eye-outline" size={16} color="#06b6d4" />
+          <Ionicons name="eye-outline" size={16} color="#6366f1" />
           <Text className="text-text text-base font-bold ml-2">Prescription</Text>
         </View>
 
@@ -314,7 +314,7 @@ export function PrescriptionDetailsScreen({ route, navigation }: PrescriptionDet
             className="w-9 h-9 rounded-full bg-border items-center justify-center mr-2"
             onPress={() => navigation.navigate('AddPrescription', { prescription })}
           >
-            <Ionicons name="create-outline" size={19} color="#06b6d4" />
+            <Ionicons name="create-outline" size={19} color="#6366f1" />
           </TouchableOpacity>
           <TouchableOpacity
             className="w-9 h-9 rounded-full bg-[#ef4444]/10 border border-[#ef4444]/20 items-center justify-center"
@@ -327,17 +327,17 @@ export function PrescriptionDetailsScreen({ route, navigation }: PrescriptionDet
 
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 48 }}>
         {/* Patient Card */}
-        <SectionCard icon="person-outline" iconColor="#06b6d4" iconBg="bg-[#06b6d4]/10" title="Patient Information">
+        <SectionCard icon="person-outline" iconColor="#6366f1" iconBg="bg-primary/10" title="Patient Information">
           <View className="flex-row items-center">
-            <View className="w-12 h-12 rounded-full bg-[#06b6d4]/10 border border-[#06b6d4]/30 items-center justify-center mr-3">
-              <Text className="text-[#06b6d4] font-bold text-base">
+            <View className="w-12 h-12 rounded-full bg-primary/10 border border-primary/30 items-center justify-center mr-3">
+              <Text className="text-primary font-bold text-base">
                 {prescription.customer?.fullName?.slice(0, 2).toUpperCase()}
               </Text>
             </View>
             <View className="flex-1">
               <Text className="text-text font-bold text-base">{prescription.customer?.fullName}</Text>
               <View className="flex-row items-center mt-1">
-                <Ionicons name="call-outline" size={12} color="#06b6d4" />
+                <Ionicons name="call-outline" size={12} color="#6366f1" />
                 <Text className="text-textSecondary text-xs ml-1.5">{prescription.customer?.phone}</Text>
               </View>
             </View>
@@ -368,7 +368,7 @@ export function PrescriptionDetailsScreen({ route, navigation }: PrescriptionDet
         {/* Visual Lens Diagrams */}
         <View className="mb-4">
           <View className="flex-row items-center mb-3">
-            <Ionicons name="eye-outline" size={16} color="#06b6d4" />
+            <Ionicons name="eye-outline" size={16} color="#6366f1" />
             <Text className="text-text font-bold text-sm ml-2">Visual Eye Diagram</Text>
           </View>
           <View className="flex-row" style={{ gap: 10 }}>
@@ -391,7 +391,7 @@ export function PrescriptionDetailsScreen({ route, navigation }: PrescriptionDet
           {/* Diagram legend */}
           <View className="bg-card border border-border rounded-xl px-4 py-3 mt-3 flex-row flex-wrap" style={{ gap: 12 }}>
             <View className="flex-row items-center">
-              <View className="w-3 h-0.5 bg-[#06b6d4] rounded mr-1.5" />
+              <View className="w-3 h-0.5 bg-primary rounded mr-1.5" />
               <Text className="text-textMuted text-[10px]">Axis line</Text>
             </View>
             <View className="flex-row items-center">
@@ -422,7 +422,7 @@ export function PrescriptionDetailsScreen({ route, navigation }: PrescriptionDet
           {/* Right Eye */}
           <View className="flex-row py-2.5 border-b border-border">
             <View className="w-[16%] flex-row items-center">
-              <View className="w-1.5 h-1.5 rounded-full bg-[#06b6d4] mr-1.5" />
+              <View className="w-1.5 h-1.5 rounded-full bg-primary mr-1.5" />
               <Text className="text-text text-xs font-bold">OD</Text>
             </View>
             <Text className="text-textSecondary text-xs w-[21%] text-center font-mono">{prescription.rightSphere ?? '0.00'}</Text>

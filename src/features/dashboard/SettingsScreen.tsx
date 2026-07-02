@@ -62,7 +62,7 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
       {/* Header Bar */}
       <View style={{ backgroundColor: colors.card, borderBottomColor: colors.border }} className="border-b px-6 pt-14 pb-4 flex-row items-center">
         <TouchableOpacity onPress={() => navigation.goBack()} className="mr-4">
-          <Ionicons name="arrow-back" size={24} color="#06b6d4" />
+          <Ionicons name="arrow-back" size={24} color="#6366f1" />
         </TouchableOpacity>
         <Text style={{ color: colors.text }} className="text-lg font-bold">{t('settings.title')}</Text>
       </View>
@@ -70,8 +70,8 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
       <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 40 }}>
         {/* User Card */}
         <View className="items-center mb-6 pt-4">
-          <View className="w-24 h-24 rounded-full bg-[#06b6d4]/10 border-2 border-[#06b6d4] items-center justify-center mb-4 shadow-lg shadow-[#06b6d4]/10">
-            <Text className="text-[#06b6d4] text-3xl font-bold">{getInitials(user?.fullName)}</Text>
+          <View className="w-24 h-24 rounded-full bg-primary/10 border-2 border-primary items-center justify-center mb-4 shadow-lg shadow-primary/10">
+            <Text className="text-primary text-3xl font-bold">{getInitials(user?.fullName)}</Text>
           </View>
           <Text style={{ color: colors.text }} className="text-xl font-bold">{user?.fullName}</Text>
           <Text style={{ color: colors.textSecondary }} className="text-sm mt-1">{user?.email}</Text>
@@ -82,31 +82,31 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
           <Text style={{ color: colors.textMuted }} className="text-[10px] font-bold uppercase tracking-wider mb-4">Business & Clinic</Text>
           
           <TouchableOpacity onPress={() => navigation.navigate('ClinicProfile')} style={{ borderBottomColor: colors.border }} className="flex-row items-center py-2.5 border-b" activeOpacity={0.7}>
-            <Ionicons name="business-outline" size={18} color="#06b6d4" className="mr-3" />
+            <Ionicons name="business-outline" size={18} color="#6366f1" className="mr-3" />
             <Text style={{ color: colors.text }} className="text-sm flex-1 font-medium">{t('settings.clinicProfile')}</Text>
             <Ionicons name="chevron-forward" size={16} color="#6b7280" />
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => navigation.navigate('Branches')} style={{ borderBottomColor: colors.border }} className="flex-row items-center py-2.5 border-b" activeOpacity={0.7}>
-            <Ionicons name="git-network-outline" size={18} color="#06b6d4" className="mr-3" />
+            <Ionicons name="git-network-outline" size={18} color="#6366f1" className="mr-3" />
             <Text style={{ color: colors.text }} className="text-sm flex-1 font-medium">{t('settings.branches')}</Text>
             <Ionicons name="chevron-forward" size={16} color="#6b7280" />
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => navigation.navigate('TaxSettings')} style={{ borderBottomColor: colors.border }} className="flex-row items-center py-2.5 border-b" activeOpacity={0.7}>
-            <Ionicons name="calculator-outline" size={18} color="#06b6d4" className="mr-3" />
+            <Ionicons name="calculator-outline" size={18} color="#6366f1" className="mr-3" />
             <Text style={{ color: colors.text }} className="text-sm flex-1 font-medium">{t('settings.taxSettings')}</Text>
             <Ionicons name="chevron-forward" size={16} color="#6b7280" />
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => navigation.navigate('Expenses')} style={{ borderBottomColor: colors.border }} className="flex-row items-center py-2.5 border-b" activeOpacity={0.7}>
-            <Ionicons name="wallet-outline" size={18} color="#06b6d4" className="mr-3" />
+            <Ionicons name="wallet-outline" size={18} color="#6366f1" className="mr-3" />
             <Text style={{ color: colors.text }} className="text-sm flex-1 font-medium">Expense Tracker</Text>
             <Ionicons name="chevron-forward" size={16} color="#6b7280" />
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => navigation.navigate('Suppliers')} className="flex-row items-center py-2.5" activeOpacity={0.7}>
-            <Ionicons name="people-outline" size={18} color="#06b6d4" className="mr-3" />
+            <Ionicons name="people-outline" size={18} color="#6366f1" className="mr-3" />
             <Text style={{ color: colors.text }} className="text-sm flex-1 font-medium">Supplier Directory</Text>
             <Ionicons name="chevron-forward" size={16} color="#6b7280" />
           </TouchableOpacity>
@@ -117,7 +117,7 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
           <Text style={{ color: colors.textMuted }} className="text-[10px] font-bold uppercase tracking-wider mb-4">Device Integrations</Text>
           
           <TouchableOpacity onPress={() => navigation.navigate('BarcodeScanner')} className="flex-row items-center py-2.5" activeOpacity={0.7}>
-            <Ionicons name="scan-outline" size={18} color="#06b6d4" className="mr-3" />
+            <Ionicons name="scan-outline" size={18} color="#6366f1" className="mr-3" />
             <Text style={{ color: colors.text }} className="text-sm flex-1 font-medium">Barcode & QR Scanner</Text>
             <Ionicons name="chevron-forward" size={16} color="#6b7280" />
           </TouchableOpacity>
@@ -128,14 +128,14 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
           <Text style={{ color: colors.textMuted }} className="text-[10px] font-bold uppercase tracking-wider mb-4">Preferences</Text>
 
           <TouchableOpacity onPress={chooseLanguage} style={{ borderBottomColor: colors.border }} className="flex-row items-center py-2.5 border-b" activeOpacity={0.7}>
-            <Ionicons name="language-outline" size={18} color="#06b6d4" className="mr-3" />
+            <Ionicons name="language-outline" size={18} color="#6366f1" className="mr-3" />
             <Text style={{ color: colors.text }} className="text-sm flex-1 font-medium">{t('settings.language')}</Text>
             <Text style={{ color: colors.textSecondary }} className="text-xs font-semibold mr-2 uppercase">{language}</Text>
             <Ionicons name="chevron-forward" size={16} color="#6b7280" />
           </TouchableOpacity>
 
           <TouchableOpacity onPress={chooseTheme} className="flex-row items-center py-2.5" activeOpacity={0.7}>
-            <Ionicons name="color-palette-outline" size={18} color="#06b6d4" className="mr-3" />
+            <Ionicons name="color-palette-outline" size={18} color="#6366f1" className="mr-3" />
             <Text style={{ color: colors.text }} className="text-sm flex-1 font-medium">{t('settings.theme')}</Text>
             <Text style={{ color: colors.textSecondary }} className="text-xs font-semibold mr-2 uppercase">{themeMode}</Text>
             <Ionicons name="chevron-forward" size={16} color="#6b7280" />

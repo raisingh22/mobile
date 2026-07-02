@@ -44,6 +44,8 @@ export function AppNavigator() {
       screenOptions={{
         headerShown: false,
         contentStyle: { backgroundColor: colors.backgroundSolid },
+        animation: 'slide_from_right',
+        animationTypeForReplace: 'push',
       }}
     >
       {isAuthenticated ? (

@@ -4,7 +4,7 @@ import {
   Animated, View, StyleSheet,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { shadows } from '../theme/colors';
+import { useThemeColors, shadows } from '../theme/colors';
 
 interface ButtonProps {
   onPress: () => void;
@@ -32,13 +32,14 @@ export function Button({
   style,
 }: ButtonProps) {
   const scaleAnim = useRef(new Animated.Value(1)).current;
+  const colors = useThemeColors();
 
   const handlePressIn = () => {
     Animated.spring(scaleAnim, {
-      toValue: 0.96,
+      toValue: 0.97,
       useNativeDriver: true,
-      speed: 50,
-      bounciness: 4,
+      speed: 40,
+      bounciness: 3,
     }).start();
   };
 
@@ -46,8 +47,8 @@ export function Button({
     Animated.spring(scaleAnim, {
       toValue: 1,
       useNativeDriver: true,
-      speed: 30,
-      bounciness: 6,
+      speed: 25,
+      bounciness: 5,
     }).start();
   };
 
@@ -58,17 +59,20 @@ export function Button({
   if (size === 'lg') { containerStyle.push(styles.lg); textStyle.push(styles.textLg); }
 
   if (variant === 'primary') {
-    containerStyle.push(styles.primary, shadows.primaryGlow);
+    containerStyle.push({ backgroundColor: colors.primary }, shadows.primaryGlow);
+    textStyle.push({ color: '#ffffff' });
   } else if (variant === 'secondary') {
-    containerStyle.push(styles.secondary);
+    containerStyle.push({ backgroundColor: colors.cardHover, borderWidth: 1, borderColor: colors.border });
+    textStyle.push({ color: colors.textSecondary });
   } else if (variant === 'outline') {
-    containerStyle.push(styles.outline);
-    textStyle.push(styles.textCyan);
+    containerStyle.push({ backgroundColor: 'transparent', borderWidth: 1.5, borderColor: colors.primary });
+    textStyle.push({ color: colors.primary });
   } else if (variant === 'danger') {
-    containerStyle.push(styles.danger, shadows.dangerGlow);
+    containerStyle.push({ backgroundColor: colors.danger }, shadows.dangerGlow);
+    textStyle.push({ color: '#ffffff' });
   } else if (variant === 'ghost') {
-    containerStyle.push(styles.ghost);
-    textStyle.push(styles.textMuted);
+    containerStyle.push({ backgroundColor: 'transparent' });
+    textStyle.push({ color: colors.textMuted });
   }
 
   if (disabled || isLoading) {
@@ -76,8 +80,9 @@ export function Button({
   }
 
   const iconColor =
-    variant === 'outline' ? '#06b6d4' :
-    variant === 'ghost' ? '#94a3b8' : '#ffffff';
+    variant === 'outline' ? colors.primary :
+    variant === 'ghost' ? colors.textMuted :
+    variant === 'secondary' ? colors.textSecondary : '#ffffff';
 
   return (
     <Animated.View style={[{ transform: [{ scale: scaleAnim }] }, style]}>
@@ -90,12 +95,12 @@ export function Button({
         style={containerStyle}
       >
         {isLoading ? (
-          <ActivityIndicator color={variant === 'outline' || variant === 'ghost' ? '#06b6d4' : '#ffffff'} size="small" />
+          <ActivityIndicator color={variant === 'outline' || variant === 'ghost' || variant === 'secondary' ? colors.primary : '#ffffff'} size="small" />
         ) : (
           <View style={styles.row}>
-            {icon && <Ionicons name={icon} size={17} color={iconColor} style={styles.iconLeft} />}
+            {icon && <Ionicons name={icon} size={size === 'sm' ? 14 : 17} color={iconColor} style={styles.iconLeft} />}
             <Text style={textStyle}>{title}</Text>
-            {iconRight && <Ionicons name={iconRight} size={17} color={iconColor} style={styles.iconRight} />}
+            {iconRight && <Ionicons name={iconRight} size={size === 'sm' ? 14 : 17} color={iconColor} style={styles.iconRight} />}
           </View>
         )}
       </TouchableOpacity>
@@ -105,27 +110,20 @@ export function Button({
 
 const styles = StyleSheet.create({
   base: {
-    borderRadius: 16,
-    paddingVertical: 15,
+    borderRadius: 14,
+    paddingVertical: 14,
     paddingHorizontal: 20,
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
   },
-  sm: { paddingVertical: 10, paddingHorizontal: 14, borderRadius: 12 },
-  lg: { paddingVertical: 18, paddingHorizontal: 28, borderRadius: 18 },
-  primary: { backgroundColor: '#06b6d4' },
-  secondary: { backgroundColor: '#1e293b', borderWidth: 1, borderColor: '#334155' },
-  outline: { backgroundColor: 'transparent', borderWidth: 1.5, borderColor: '#06b6d4' },
-  danger: { backgroundColor: '#f43f5e' },
-  ghost: { backgroundColor: 'transparent' },
-  disabled: { opacity: 0.45 },
+  sm: { paddingVertical: 8, paddingHorizontal: 12, borderRadius: 10 },
+  lg: { paddingVertical: 16, paddingHorizontal: 26, borderRadius: 16 },
+  disabled: { opacity: 0.5 },
   row: { flexDirection: 'row', alignItems: 'center' },
   iconLeft: { marginRight: 8 },
   iconRight: { marginLeft: 8 },
-  text: { color: '#ffffff', fontWeight: '700', fontSize: 15, letterSpacing: 0.2 },
-  textSm: { fontSize: 13 },
-  textLg: { fontSize: 17 },
-  textCyan: { color: '#06b6d4' },
-  textMuted: { color: '#94a3b8' },
+  text: { fontWeight: '600', fontSize: 14, letterSpacing: 0.1 },
+  textSm: { fontSize: 12 },
+  textLg: { fontSize: 16 },
 });

@@ -36,7 +36,7 @@ export function BranchesScreen({ navigation }: any) {
   if (isLoading) {
     return (
       <View style={{ flex: 1, backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color="#06b6d4" />
+        <ActivityIndicator size="large" color="#6366f1" />
       </View>
     );
   }
@@ -46,12 +46,12 @@ export function BranchesScreen({ navigation }: any) {
       <View className="bg-card border-b border-border px-6 pt-14 pb-4 flex-row items-center justify-between">
         <View className="flex-row items-center">
           <TouchableOpacity onPress={() => navigation.goBack()} className="mr-4">
-            <Ionicons name="arrow-back" size={24} color="#06b6d4" />
+            <Ionicons name="arrow-back" size={24} color="#6366f1" />
           </TouchableOpacity>
           <Text className="text-text text-lg font-bold">Branches & Hours</Text>
         </View>
         <TouchableOpacity onPress={() => navigation.navigate('AddBranch')}>
-          <Ionicons name="add" size={26} color="#06b6d4" />
+          <Ionicons name="add" size={26} color="#6366f1" />
         </TouchableOpacity>
       </View>
 

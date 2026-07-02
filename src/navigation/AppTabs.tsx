@@ -65,17 +65,22 @@ export function AppTabs() {
         tabBarStyle: {
           backgroundColor: colors.card,
           borderTopWidth: 1,
-          borderTopColor: colors.border,
+          borderTopColor: colors.borderGlow,
           height: 60 + insets.bottom,
           paddingTop: 8,
           paddingBottom: insets.bottom > 0 ? insets.bottom : 8,
           elevation: 0,
+          shadowColor: colors.primary,
+          shadowOffset: { width: 0, height: -2 },
+          shadowOpacity: 0.08,
+          shadowRadius: 8,
         },
         tabBarLabelStyle: {
           fontSize: 10,
           fontWeight: '700',
-          marginTop: 4,
-          letterSpacing: 0.3,
+          marginTop: 2,
+          letterSpacing: 0.5,
+          textTransform: 'uppercase',
         },
       })}
     >

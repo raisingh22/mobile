@@ -45,7 +45,7 @@ export function ClinicProfileScreen({ navigation }: any) {
   if (isLoading) {
     return (
       <View style={{ flex: 1, backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color="#06b6d4" />
+        <ActivityIndicator size="large" color="#6366f1" />
       </View>
     );
   }
@@ -54,7 +54,7 @@ export function ClinicProfileScreen({ navigation }: any) {
     <View style={{ flex: 1, backgroundColor: colors.background }}>
       <View className="bg-card border-b border-border px-6 pt-14 pb-4 flex-row items-center">
         <TouchableOpacity onPress={() => navigation.goBack()} className="mr-4">
-          <Ionicons name="arrow-back" size={24} color="#06b6d4" />
+          <Ionicons name="arrow-back" size={24} color="#6366f1" />
         </TouchableOpacity>
         <Text className="text-text text-lg font-bold">Clinic Profile</Text>
       </View>
@@ -94,7 +94,7 @@ export function ClinicProfileScreen({ navigation }: any) {
           <TouchableOpacity
             onPress={handleSave}
             disabled={mutation.isPending}
-            className="bg-[#06b6d4] rounded-lg py-3 mt-4 items-center"
+            className="bg-primary rounded-lg py-3 mt-4 items-center"
           >
             {mutation.isPending ? (
               <ActivityIndicator color="#fff" />

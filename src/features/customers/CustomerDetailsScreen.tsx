@@ -13,7 +13,7 @@ import { CustomerLedgerTab } from '../ledger/CustomerLedgerTab';
 // ── Tag definitions ────────────────────────────────────────────────
 const TAG_CONFIG: Record<string, { color: string; bg: string }> = {
   'VIP':          { color: '#eab308', bg: '#eab30818' },
-  'Regular':      { color: '#06b6d4', bg: '#06b6d418' },
+  'Regular':      { color: '#6366f1', bg: '#6366f118' },
   'New Patient':  { color: '#10b981', bg: '#10b98118' },
   'High Risk':    { color: '#ef4444', bg: '#ef444418' },
   'Diabetic':     { color: '#f97316', bg: '#f9731618' },
@@ -45,8 +45,8 @@ type TimelineItem =
 function TimelineCard({ item, onPress }: { item: TimelineItem; onPress: () => void }) {
   const isPrescription = item.kind === 'prescription';
   const iconName = isPrescription ? 'eye-outline' : 'receipt-outline';
-  const iconColor = isPrescription ? '#06b6d4' : '#10b981';
-  const iconBg = isPrescription ? '#06b6d415' : '#10b98115';
+  const iconColor = isPrescription ? '#6366f1' : '#10b981';
+  const iconBg = isPrescription ? '#6366f115' : '#10b98115';
   const dateLabel = new Date(item.date).toLocaleDateString('en-IN', {
     day: 'numeric', month: 'short', year: 'numeric',
   });
@@ -116,8 +116,8 @@ function TimelineCard({ item, onPress }: { item: TimelineItem; onPress: () => vo
         )}
 
         <View className="flex-row items-center mt-2 pt-2 border-t border-border">
-          <Text className="text-[#06b6d4] text-[10px] font-semibold">View Details</Text>
-          <Ionicons name="chevron-forward" size={10} color="#06b6d4" style={{ marginLeft: 2 }} />
+          <Text className="text-primary text-[10px] font-semibold">View Details</Text>
+          <Ionicons name="chevron-forward" size={10} color="#6366f1" style={{ marginLeft: 2 }} />
         </View>
       </TouchableOpacity>
     </View>
@@ -240,8 +240,8 @@ export function CustomerDetailsScreen({ route, navigation }: CustomerDetailsScre
   if (isLoading) {
     return (
       <View style={{ flex: 1, backgroundColor: colors.background }} className="justify-center items-center">
-        <View className="w-16 h-16 rounded-full bg-[#06b6d4]/10 items-center justify-center mb-4">
-          <Ionicons name="person-outline" size={30} color="#06b6d4" />
+        <View className="w-16 h-16 rounded-full bg-primary/10 items-center justify-center mb-4">
+          <Ionicons name="person-outline" size={30} color="#6366f1" />
         </View>
         <ActivityIndicator size="large" color={colors.primary} />
       </View>
@@ -263,7 +263,7 @@ export function CustomerDetailsScreen({ route, navigation }: CustomerDetailsScre
           onPress={() => navigation.goBack()}
           className="w-9 h-9 rounded-full bg-border items-center justify-center"
         >
-          <Ionicons name="arrow-back" size={20} color="#06b6d4" />
+          <Ionicons name="arrow-back" size={20} color="#6366f1" />
         </TouchableOpacity>
 
         <Text className="text-text font-bold text-base">Customer Profile</Text>
@@ -273,7 +273,7 @@ export function CustomerDetailsScreen({ route, navigation }: CustomerDetailsScre
             className="w-9 h-9 rounded-full bg-border items-center justify-center mr-2"
             onPress={() => navigation.navigate('AddEditCustomer', { customer })}
           >
-            <Ionicons name="create-outline" size={19} color="#06b6d4" />
+            <Ionicons name="create-outline" size={19} color="#6366f1" />
           </TouchableOpacity>
           <TouchableOpacity
             className="w-9 h-9 rounded-full bg-[#ef4444]/10 border border-[#ef4444]/20 items-center justify-center"
@@ -288,19 +288,19 @@ export function CustomerDetailsScreen({ route, navigation }: CustomerDetailsScre
         {/* ── Profile hero card ── */}
         <View className="bg-card border border-border rounded-2xl overflow-hidden mb-4">
           <View className="bg-card px-5 pt-5 pb-4 flex-row items-center">
-            <View className="w-14 h-14 rounded-full bg-[#06b6d4]/10 border-2 border-primary/40 items-center justify-center mr-4">
-              <Text className="text-[#06b6d4] font-bold text-xl">{initials}</Text>
+            <View className="w-14 h-14 rounded-full bg-primary/10 border-2 border-primary/40 items-center justify-center mr-4">
+              <Text className="text-primary font-bold text-xl">{initials}</Text>
             </View>
             <View className="flex-1">
               <Text className="text-text font-bold text-lg">{customer.fullName}</Text>
               <View className="flex-row items-center mt-1">
-                <Ionicons name="call-outline" size={12} color="#06b6d4" />
+                <Ionicons name="call-outline" size={12} color="#6366f1" />
                 <Text className="text-textSecondary text-xs ml-1.5">{customer.phone}</Text>
               </View>
             </View>
             {/* Quick stats */}
             <View className="items-end">
-              <Text className="text-[#06b6d4] font-bold text-lg">{visitsData?.length || 0}</Text>
+              <Text className="text-primary font-bold text-lg">{visitsData?.length || 0}</Text>
               <Text className="text-textMuted text-[10px]">Visits</Text>
             </View>
           </View>
@@ -326,7 +326,7 @@ export function CustomerDetailsScreen({ route, navigation }: CustomerDetailsScre
               />
             )}
             {customer.gender && (
-              <InfoRow icon="person-outline" iconColor="#06b6d4" label="Gender" value={customer.gender} />
+              <InfoRow icon="person-outline" iconColor="#6366f1" label="Gender" value={customer.gender} />
             )}
             {customer.address && (
               <InfoRow icon="location-outline" iconColor="#f59e0b" label="Address" value={customer.address} />
@@ -402,8 +402,8 @@ export function CustomerDetailsScreen({ route, navigation }: CustomerDetailsScre
                   className="flex-row items-center bg-card border border-border rounded-xl px-4 py-3 mb-2"
                   onPress={() => navigation.push('CustomerDetails', { customerId: member.id })}
                 >
-                  <View className="w-9 h-9 rounded-full bg-[#06b6d4]/10 border border-[#06b6d4]/30 items-center justify-center mr-3">
-                    <Text className="text-[#06b6d4] font-bold text-xs">
+                  <View className="w-9 h-9 rounded-full bg-primary/10 border border-primary/30 items-center justify-center mr-3">
+                    <Text className="text-primary font-bold text-xs">
                       {member.fullName.slice(0, 2).toUpperCase()}
                     </Text>
                   </View>
@@ -412,7 +412,7 @@ export function CustomerDetailsScreen({ route, navigation }: CustomerDetailsScre
                     <Text className="text-textMuted text-xs mt-0.5">{member.phone}</Text>
                   </View>
                   <View className="items-end">
-                    <Text className="text-[#06b6d4] text-[10px] font-bold uppercase">
+                    <Text className="text-primary text-[10px] font-bold uppercase">
                       {member.relationType || 'Member'}
                     </Text>
                     <Ionicons name="chevron-forward" size={14} color="#71717a" style={{ marginTop: 2 }} />
@@ -429,7 +429,7 @@ export function CustomerDetailsScreen({ route, navigation }: CustomerDetailsScre
             <Text className="text-text font-extrabold text-base">Visits & History</Text>
             <TouchableOpacity
               onPress={() => navigation.navigate('NewVisit', { customerId, customerName: customer.fullName })}
-              className="bg-[#06b6d4] px-4 py-2.5 rounded-xl flex-row items-center"
+              className="bg-primary px-4 py-2.5 rounded-xl flex-row items-center"
             >
               <Ionicons name="add-circle" size={16} color="#fff" style={{ marginRight: 6 }} />
               <Text className="text-white text-xs font-bold">New Visit</Text>
@@ -437,7 +437,7 @@ export function CustomerDetailsScreen({ route, navigation }: CustomerDetailsScre
           </View>
 
           {isVisitsLoading ? (
-            <ActivityIndicator size="large" color="#06b6d4" style={{ marginVertical: 30 }} />
+            <ActivityIndicator size="large" color="#6366f1" style={{ marginVertical: 30 }} />
           ) : !visitsData || visitsData.length === 0 ? (
             <View className="bg-card border border-border rounded-2xl p-10 items-center">
               <Ionicons name="calendar-outline" size={36} color="#374151" />
@@ -457,8 +457,8 @@ export function CustomerDetailsScreen({ route, navigation }: CustomerDetailsScre
                   <View className="flex-row justify-between items-start border-b border-border pb-3 mb-3">
                     <View>
                       <View className="flex-row items-center" style={{ gap: 8 }}>
-                        <View className="bg-[#06b6d4]/10 border border-[#06b6d4]/30 px-2 py-0.5 rounded-md">
-                          <Text className="text-[#06b6d4] text-[10px] font-extrabold uppercase">{visit.type}</Text>
+                        <View className="bg-primary/10 border border-primary/30 px-2 py-0.5 rounded-md">
+                          <Text className="text-primary text-[10px] font-extrabold uppercase">{visit.type}</Text>
                         </View>
                         <Text className="text-textMuted text-[10px] font-semibold">{visitDate}</Text>
                       </View>
@@ -485,8 +485,8 @@ export function CustomerDetailsScreen({ route, navigation }: CustomerDetailsScre
                   {visit.prescriptions?.map((rx: any) => (
                     <View key={rx.id} className="bg-[#0f1623] border border-border rounded-xl p-3 mb-3">
                       <View className="flex-row items-center mb-2 pb-1.5 border-b border-border" style={{ gap: 8 }}>
-                        <Ionicons name="eye-outline" size={13} color="#06b6d4" />
-                        <Text className="text-[#06b6d4] text-[11px] font-bold uppercase tracking-wider">Refraction Findings</Text>
+                        <Ionicons name="eye-outline" size={13} color="#6366f1" />
+                        <Text className="text-primary text-[11px] font-bold uppercase tracking-wider">Refraction Findings</Text>
                       </View>
 
                       {/* OD/OS values */}

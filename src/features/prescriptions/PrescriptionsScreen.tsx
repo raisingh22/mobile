@@ -57,7 +57,7 @@ function PatientPrescriptionCard({ item, navigation }: { item: any; navigation: 
           style={s.addRxBtn}
           activeOpacity={0.8}
         >
-          <Ionicons name="add" size={18} color="#06b6d4" />
+          <Ionicons name="add" size={18} color="#6366f1" />
           <Text style={s.addRxBtnText}>New Rx</Text>
         </TouchableOpacity>
       </TouchableOpacity>
@@ -101,7 +101,7 @@ export function PrescriptionsScreen({ navigation }: PrescriptionsScreenProps) {
       <View style={s.header}>
         <View className="flex-row items-center">
           <View style={s.headerIcon}>
-            <Ionicons name="eye-outline" size={18} color="#06b6d4" />
+            <Ionicons name="eye-outline" size={18} color="#6366f1" />
           </View>
           <View>
             <Text style={s.headerTitle}>Eye Prescriptions</Text>

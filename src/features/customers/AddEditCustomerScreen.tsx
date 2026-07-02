@@ -19,7 +19,7 @@ import { useThemeColors } from '../../theme/colors';
 // ── Tag definitions ──────────────────────────────────────────────
 const PREDEFINED_TAGS = [
   { label: 'VIP',          color: '#eab308', bg: '#eab30815' },
-  { label: 'Regular',      color: '#06b6d4', bg: '#06b6d415' },
+  { label: 'Regular',      color: '#6366f1', bg: '#6366f115' },
   { label: 'New Patient',  color: '#10b981', bg: '#10b98115' },
   { label: 'High Risk',    color: '#ef4444', bg: '#ef444415' },
   { label: 'Diabetic',     color: '#f97316', bg: '#f9731615' },
@@ -195,8 +195,8 @@ function FamilyMemberPicker({
                     setQuery('');
                   }}
                 >
-                  <View className="w-9 h-9 rounded-full bg-[#06b6d4]/10 border border-[#06b6d4]/30 items-center justify-center mr-3">
-                    <Text className="text-[#06b6d4] font-bold text-xs">
+                  <View className="w-9 h-9 rounded-full bg-primary/10 border border-primary/30 items-center justify-center mr-3">
+                    <Text className="text-primary font-bold text-xs">
                       {item.fullName.slice(0, 2).toUpperCase()}
                     </Text>
                   </View>
@@ -323,7 +323,7 @@ export function AddEditCustomerScreen({ route, navigation }: AddEditCustomerScre
         </TouchableOpacity>
 
         <View className="flex-row items-center">
-          <Ionicons name="person-outline" size={15} color="#06b6d4" />
+          <Ionicons name="person-outline" size={15} color="#6366f1" />
           <Text className="text-text text-base font-bold ml-2">
             {isEdit ? 'Edit Customer' : 'Add Customer'}
           </Text>
@@ -336,8 +336,8 @@ export function AddEditCustomerScreen({ route, navigation }: AddEditCustomerScre
         {/* ── Core Info ── */}
         <View className="bg-card border border-border rounded-2xl p-4 mb-4">
           <View className="flex-row items-center mb-4">
-            <View className="w-7 h-7 rounded-full bg-[#06b6d4]/10 items-center justify-center mr-2">
-              <Ionicons name="person-outline" size={14} color="#06b6d4" />
+            <View className="w-7 h-7 rounded-full bg-primary/10 items-center justify-center mr-2">
+              <Ionicons name="person-outline" size={14} color="#6366f1" />
             </View>
             <Text className="text-text font-bold text-sm">Basic Information</Text>
           </View>
@@ -392,11 +392,11 @@ export function AddEditCustomerScreen({ route, navigation }: AddEditCustomerScre
                         onPress={() => onChange(active ? '' : g)}
                         className="flex-1 items-center py-2 rounded-xl border"
                         style={{
-                          backgroundColor: active ? '#06b6d415' : 'transparent',
-                          borderColor: active ? '#06b6d4' : colors.border,
+                          backgroundColor: active ? '#4f46e515' : 'transparent',
+                          borderColor: active ? '#6366f1' : colors.border,
                         }}
                       >
-                        <Text className="text-xs font-semibold" style={{ color: active ? '#06b6d4' : colors.textSecondary }}>
+                        <Text className="text-xs font-semibold" style={{ color: active ? '#6366f1' : colors.textSecondary }}>
                           {g}
                         </Text>
                       </TouchableOpacity>

@@ -14,7 +14,7 @@ import { offlineCache } from '../../services/offlineCache';
 
 const TAG_COLOR: Record<string, { color: string; bg: string }> = {
   'VIP':          { color: '#eab308', bg: '#eab30820' },
-  'Regular':      { color: '#06b6d4', bg: '#06b6d420' },
+  'Regular':      { color: '#6366f1', bg: '#6366f120' },
   'New Patient':  { color: '#10b981', bg: '#10b98120' },
   'High Risk':    { color: '#ef4444', bg: '#ef444420' },
   'Diabetic':     { color: '#f97316', bg: '#f9731620' },
@@ -53,12 +53,12 @@ function CustomerCard({ item, onPress }: { item: any; onPress: () => void }) {
         <View style={s.cardBody}>
           <Text style={s.name}>{item.fullName}</Text>
           <View style={s.infoRow}>
-            <Ionicons name="call-outline" size={12} color="#64748b" />
+            <Ionicons name="call-outline" size={12} color={colors.textMuted} />
             <Text style={s.infoText}>{item.phone}</Text>
             {item.email ? (
               <>
                 <View style={s.dot} />
-                <Ionicons name="mail-outline" size={12} color="#64748b" />
+                <Ionicons name="mail-outline" size={12} color={colors.textMuted} />
                 <Text style={s.infoText} numberOfLines={1}>{item.email}</Text>
               </>
             ) : null}
@@ -76,8 +76,8 @@ function CustomerCard({ item, onPress }: { item: any; onPress: () => void }) {
                 );
               })}
               {item.tags.length > 3 && (
-                <View style={[s.tag, { backgroundColor: '#1f2937' }]}>
-                  <Text style={[s.tagText, { color: '#64748b' }]}>+{item.tags.length - 3}</Text>
+                <View style={[s.tag, { backgroundColor: colors.card }]}>
+                  <Text style={[s.tagText, { color: colors.textMuted }]}>+{item.tags.length - 3}</Text>
                 </View>
               )}
             </View>
@@ -88,7 +88,7 @@ function CustomerCard({ item, onPress }: { item: any; onPress: () => void }) {
           ) : null}
         </View>
 
-        <Ionicons name="chevron-forward" size={18} color="#334155" />
+        <Ionicons name="chevron-forward" size={18} color={colors.textDisabled} />
       </TouchableOpacity>
     </Animated.View>
   );
@@ -153,17 +153,17 @@ export function CustomersScreen({ navigation }: CustomersScreenProps) {
 
         {/* Search bar */}
         <View style={s.searchBar}>
-          <Ionicons name="search-outline" size={17} color="#64748b" />
+          <Ionicons name="search-outline" size={17} color={colors.textMuted} />
           <TextInput
             style={s.searchInput}
             placeholder="Search name, phone, email..."
-            placeholderTextColor="#475569"
+            placeholderTextColor={colors.textDisabled}
             value={search}
             onChangeText={setSearch}
           />
           {search ? (
             <TouchableOpacity onPress={() => setSearch('')}>
-              <Ionicons name="close-circle" size={17} color="#64748b" />
+              <Ionicons name="close-circle" size={17} color={colors.textMuted} />
             </TouchableOpacity>
           ) : null}
         </View>
@@ -190,7 +190,7 @@ export function CustomersScreen({ navigation }: CustomersScreenProps) {
           ListEmptyComponent={
             <View style={s.emptyState}>
               <View style={s.emptyIcon}>
-                <Ionicons name="people-outline" size={36} color="#334155" />
+                <Ionicons name="people-outline" size={36} color={colors.textDisabled} />
               </View>
               <Text style={s.emptyTitle}>
                 {search ? 'No matches found' : 'No customers yet'}

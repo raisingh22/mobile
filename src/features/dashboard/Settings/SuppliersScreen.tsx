@@ -74,7 +74,7 @@ export function SuppliersScreen({ navigation }: any) {
   if (isLoading) {
     return (
       <View style={{ flex: 1, backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color="#06b6d4" />
+        <ActivityIndicator size="large" color="#6366f1" />
       </View>
     );
   }
@@ -85,11 +85,11 @@ export function SuppliersScreen({ navigation }: any) {
       <View className="bg-card border-b border-border px-6 pt-14 pb-4 flex-row items-center justify-between">
         <View className="flex-row items-center">
           <TouchableOpacity onPress={() => navigation.goBack()} className="mr-4">
-            <Ionicons name="arrow-back" size={24} color="#06b6d4" />
+            <Ionicons name="arrow-back" size={24} color="#6366f1" />
           </TouchableOpacity>
           <Text className="text-text text-lg font-bold">Supplier Directory</Text>
         </View>
-        <TouchableOpacity onPress={() => setModalVisible(true)} className="bg-[#06b6d4] w-9 h-9 rounded-full items-center justify-center">
+        <TouchableOpacity onPress={() => setModalVisible(true)} className="bg-primary w-9 h-9 rounded-full items-center justify-center">
           <Ionicons name="add" size={22} color="#fff" />
         </TouchableOpacity>
       </View>
@@ -118,9 +118,9 @@ export function SuppliersScreen({ navigation }: any) {
               {/* Action Rows */}
               <View className="flex-row border-t border-border pt-3 mt-1" style={{ gap: 12 }}>
                 {supplier.phone && (
-                  <TouchableOpacity onPress={() => handleCall(supplier.phone)} className="flex-row items-center bg-[#06b6d4]/10 px-3 py-1.5 rounded-lg border border-[#06b6d4]/20">
-                    <Ionicons name="call-outline" size={14} color="#06b6d4" className="mr-1.5" />
-                    <Text className="text-[#06b6d4] text-xs font-bold">Call</Text>
+                  <TouchableOpacity onPress={() => handleCall(supplier.phone)} className="flex-row items-center bg-primary/10 px-3 py-1.5 rounded-lg border border-primary/20">
+                    <Ionicons name="call-outline" size={14} color="#6366f1" className="mr-1.5" />
+                    <Text className="text-primary text-xs font-bold">Call</Text>
                   </TouchableOpacity>
                 )}
                 {supplier.email && (
@@ -187,7 +187,7 @@ export function SuppliersScreen({ navigation }: any) {
             <TouchableOpacity
               onPress={handleSave}
               disabled={createMutation.isPending}
-              className="bg-[#06b6d4] rounded-lg py-3 items-center"
+              className="bg-primary rounded-lg py-3 items-center"
             >
               {createMutation.isPending ? (
                 <ActivityIndicator color="#fff" />

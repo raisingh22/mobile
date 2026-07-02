@@ -11,10 +11,14 @@ module.exports = {
         text: 'rgb(var(--color-text) / <alpha-value>)',
         textSecondary: 'rgb(var(--color-text-secondary) / <alpha-value>)',
         textMuted: 'rgb(var(--color-text-muted) / <alpha-value>)',
+        success: 'rgb(var(--color-success) / <alpha-value>)',
+        warning: 'rgb(var(--color-warning) / <alpha-value>)',
+        danger: 'rgb(var(--color-danger) / <alpha-value>)',
+        info: 'rgb(var(--color-info) / <alpha-value>)',
         // Custom name aliases:
-        'opti-cyan': '#06b6d4',
+        'opti-indigo': '#6366f1',
         'opti-navy': '#090d16',
-        'opti-slate': '#111827',
+        'opti-slate': '#0f172a',
       }
     },
   },

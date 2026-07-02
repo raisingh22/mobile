@@ -27,7 +27,7 @@ export function BarcodeScannerScreen({ navigation }: any) {
       {/* Header Bar */}
       <View style={[s.header, { paddingTop: insets.top > 0 ? insets.top + 8 : 20 }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
-          <Ionicons name="arrow-back" size={24} color="#06b6d4" />
+          <Ionicons name="arrow-back" size={24} color="#6366f1" />
         </TouchableOpacity>
         <Text style={s.headerTitle}>Scan Barcode / QR</Text>
         <View style={{ width: 40 }} />
@@ -50,7 +50,7 @@ export function BarcodeScannerScreen({ navigation }: any) {
               
               {scanning && (
                 <View style={s.scanLine}>
-                  <ActivityIndicator size="small" color="#06b6d4" />
+                  <ActivityIndicator size="small" color="#6366f1" />
                 </View>
               )}
             </View>
@@ -99,15 +99,15 @@ const s = StyleSheet.create({
   },
   corner: {
     position: 'absolute', width: 20, height: 20,
-    borderColor: '#06b6d4', borderWidth: 3,
+    borderColor: '#6366f1', borderWidth: 3,
   },
   tl: { top: 0, left: 0, borderRightWidth: 0, borderBottomWidth: 0, borderTopLeftRadius: 12 },
   tr: { top: 0, right: 0, borderLeftWidth: 0, borderBottomWidth: 0, borderTopRightRadius: 12 },
   bl: { bottom: 0, left: 0, borderRightWidth: 0, borderTopWidth: 0, borderBottomLeftRadius: 12 },
   br: { bottom: 0, right: 0, borderLeftWidth: 0, borderTopWidth: 0, borderBottomRightRadius: 12 },
   scanLine: {
-    width: '80%', height: 2, backgroundColor: '#06b6d4',
-    shadowColor: '#06b6d4', shadowOpacity: 0.8, shadowRadius: 4,
+    width: '80%', height: 2, backgroundColor: '#4f46e5',
+    shadowColor: '#6366f1', shadowOpacity: 0.8, shadowRadius: 4,
     flexDirection: 'row', justifyContent: 'center', alignItems: 'center',
   },
   layerBottom: {
@@ -120,7 +120,7 @@ const s = StyleSheet.create({
   hintText: { color: '#94a3b8', fontSize: 13, textAlign: 'center', marginBottom: 24, lineHeight: 20 },
   scanBtn: {
     flexDirection: 'row', alignItems: 'center',
-    backgroundColor: '#06b6d4', borderRadius: 14,
+    backgroundColor: '#4f46e5', borderRadius: 14,
     paddingVertical: 14, paddingHorizontal: 24,
   },
   scanBtnText: { color: '#fff', fontWeight: '700', fontSize: 14 },

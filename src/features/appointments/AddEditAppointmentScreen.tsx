@@ -12,7 +12,7 @@ import { ENDPOINTS } from '../../api/endpoints';
 import { useThemeColors } from '../../theme/colors';
 
 const APPOINTMENT_TYPES = [
-  { label: 'Examination',     icon: 'eye-outline',       color: '#06b6d4' },
+  { label: 'Examination',     icon: 'eye-outline',       color: '#6366f1' },
   { label: 'Frame Selection', icon: 'glasses-outline',   color: '#a78bfa' },
   { label: 'Collection',      icon: 'bag-check-outline', color: '#10b981' },
   { label: 'Follow-up',       icon: 'repeat-outline',    color: '#f59e0b' },
@@ -141,7 +141,7 @@ export function AddEditAppointmentScreen({ route, navigation }: AddEditAppointme
           <Ionicons name="close" size={18} color={colors.textSecondary} />
         </TouchableOpacity>
         <View className="flex-row items-center">
-          <Ionicons name="calendar-outline" size={15} color="#06b6d4" />
+          <Ionicons name="calendar-outline" size={15} color="#6366f1" />
           <Text className="text-text text-base font-bold ml-2">
             {isEdit ? 'Reschedule' : walkIn ? 'Walk-in' : 'Book Appointment'}
           </Text>
@@ -178,8 +178,8 @@ export function AddEditAppointmentScreen({ route, navigation }: AddEditAppointme
           >
             {selectedCustomerId ? (
               <View className="flex-row items-center flex-1">
-                <View className="w-8 h-8 rounded-full bg-[#06b6d4]/10 border border-[#06b6d4]/30 items-center justify-center mr-2.5">
-                  <Text className="text-[#06b6d4] font-bold text-xs">
+                <View className="w-8 h-8 rounded-full bg-primary/10 border border-primary/30 items-center justify-center mr-2.5">
+                  <Text className="text-primary font-bold text-xs">
                     {selectedCustomerName.slice(0, 2).toUpperCase()}
                   </Text>
                 </View>
@@ -198,8 +198,8 @@ export function AddEditAppointmentScreen({ route, navigation }: AddEditAppointme
         {/* ── Appointment type ── */}
         <View className="bg-card border border-border rounded-2xl p-4 mb-4">
           <View className="flex-row items-center mb-3">
-            <View className="w-7 h-7 rounded-full bg-[#06b6d4]/10 items-center justify-center mr-2">
-              <Ionicons name="medical-outline" size={14} color="#06b6d4" />
+            <View className="w-7 h-7 rounded-full bg-primary/10 items-center justify-center mr-2">
+              <Ionicons name="medical-outline" size={14} color="#6366f1" />
             </View>
             <Text className="text-text font-bold text-sm">Appointment Type</Text>
           </View>
@@ -418,8 +418,8 @@ export function AddEditAppointmentScreen({ route, navigation }: AddEditAppointme
                     setCustomerSearch('');
                   }}
                 >
-                  <View className="w-9 h-9 rounded-full bg-[#06b6d4]/10 border border-[#06b6d4]/30 items-center justify-center mr-3">
-                    <Text className="text-[#06b6d4] font-bold text-xs">
+                  <View className="w-9 h-9 rounded-full bg-primary/10 border border-primary/30 items-center justify-center mr-3">
+                    <Text className="text-primary font-bold text-xs">
                       {item.fullName.slice(0, 2).toUpperCase()}
                     </Text>
                   </View>

@@ -14,6 +14,7 @@ import { axiosClient } from '../../api/axiosClient';
 import { ENDPOINTS } from '../../api/endpoints';
 import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
+import { useThemeColors } from '../../theme/colors';
 
 const registerSchema = z.object({
   fullName: z.string().min(2, 'Name must be at least 2 characters'),
@@ -35,6 +36,7 @@ const FEATURES = [
 export function RegisterScreen({ navigation }: RegisterScreenProps) {
   const insets = useSafeAreaInsets();
   const { setAuth } = useAuthStore();
+  const colors = useThemeColors();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -72,10 +74,10 @@ export function RegisterScreen({ navigation }: RegisterScreenProps) {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.flex}
     >
-      <View style={styles.screen}>
+      <View style={[styles.screen, { backgroundColor: colors.backgroundSolid }]}>
         {/* Background glows */}
-        <View style={styles.bgGlow1} />
-        <View style={styles.bgGlow2} />
+        <View style={[styles.bgGlow1, { backgroundColor: colors.primary }]} />
+        <View style={[styles.bgGlow2, { backgroundColor: colors.purple }]} />
 
         <ScrollView
           contentContainerStyle={[styles.scroll, { paddingTop: insets.top + 16 }]}
@@ -84,34 +86,45 @@ export function RegisterScreen({ navigation }: RegisterScreenProps) {
         >
           {/* Back button */}
           <TouchableOpacity
-            style={styles.backBtn}
+            style={[styles.backBtn, { backgroundColor: colors.card, borderColor: colors.border }]}
             onPress={() => navigation.navigate('Login')}
           >
-            <Ionicons name="arrow-back" size={20} color="#06b6d4" />
+            <Ionicons name="arrow-back" size={20} color={colors.primary} />
           </TouchableOpacity>
 
           {/* Header */}
           <Animated.View style={[styles.header, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
-            <View style={styles.logoMark}>
-              <Ionicons name="business-outline" size={26} color="#06b6d4" />
+            <View style={[styles.logoMark, { backgroundColor: colors.primaryGlow, borderColor: colors.primary + '30' }]}>
+              <Ionicons name="business-outline" size={26} color={colors.primary} />
             </View>
-            <Text style={styles.title}>Create Workspace</Text>
-            <Text style={styles.subtitle}>Set up your optical shop in 60 seconds</Text>
+            <Text style={[styles.title, { color: colors.text }]}>Create Workspace</Text>
+            <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Set up your optical shop in 60 seconds</Text>
           </Animated.View>
 
           {/* Feature pills */}
           <Animated.View style={[styles.featureRow, { opacity: fadeAnim }]}>
             {FEATURES.map((f) => (
-              <View key={f.text} style={styles.featurePill}>
-                <Ionicons name={f.icon} size={13} color="#06b6d4" />
-                <Text style={styles.featureText}>{f.text}</Text>
+              <View
+                key={f.text}
+                style={[
+                  styles.featurePill,
+                  { backgroundColor: colors.primaryGlow, borderColor: colors.primary + '25' },
+                ]}
+              >
+                <Ionicons name={f.icon} size={13} color={colors.primary} />
+                <Text style={[styles.featureText, { color: colors.textSecondary }]}>{f.text}</Text>
               </View>
             ))}
           </Animated.View>
 
           {/* Form Card */}
-          <Animated.View style={[styles.card, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
-            <Text style={styles.cardTitle}>Your Details</Text>
+          <Animated.View
+            style={[
+              styles.card,
+              { backgroundColor: colors.card, borderColor: colors.border, opacity: fadeAnim, transform: [{ translateY: slideAnim }] },
+            ]}
+          >
+            <Text style={[styles.cardTitle, { color: colors.textMuted }]}>Your Details</Text>
 
             <Controller control={control} name="fullName"
               render={({ field: { onChange, onBlur, value } }) => (
@@ -144,9 +157,9 @@ export function RegisterScreen({ navigation }: RegisterScreenProps) {
             />
 
             <View style={styles.sectionDivider}>
-              <View style={styles.divLine} />
-              <Text style={styles.divText}>Workspace Info</Text>
-              <View style={styles.divLine} />
+              <View style={[styles.divLine, { backgroundColor: colors.borderLight }]} />
+              <Text style={[styles.divText, { color: colors.textMuted }]}>Workspace Info</Text>
+              <View style={[styles.divLine, { backgroundColor: colors.borderLight }]} />
             </View>
 
             <Controller control={control} name="workspaceName"
@@ -170,8 +183,8 @@ export function RegisterScreen({ navigation }: RegisterScreenProps) {
           </Animated.View>
 
           <TouchableOpacity style={styles.signInRow} onPress={() => navigation.navigate('Login')}>
-            <Text style={styles.signInText}>Already have a workspace? </Text>
-            <Text style={styles.signInLink}>Sign In</Text>
+            <Text style={[styles.signInText, { color: colors.textSecondary }]}>Already have a workspace? </Text>
+            <Text style={[styles.signInLink, { color: colors.primary }]}>Sign In</Text>
           </TouchableOpacity>
         </ScrollView>
       </View>
@@ -181,62 +194,59 @@ export function RegisterScreen({ navigation }: RegisterScreenProps) {
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
-  screen: { flex: 1, backgroundColor: '#070912' },
+  screen: { flex: 1 },
   bgGlow1: {
     position: 'absolute', bottom: 100, right: -80,
     width: 280, height: 280, borderRadius: 140,
-    backgroundColor: '#06b6d4', opacity: 0.05,
+    opacity: 0.06,
   },
   bgGlow2: {
     position: 'absolute', top: 120, left: -100,
     width: 260, height: 260, borderRadius: 130,
-    backgroundColor: '#a78bfa', opacity: 0.04,
+    opacity: 0.05,
   },
   scroll: { paddingHorizontal: 24, paddingBottom: 48 },
   backBtn: {
     width: 40, height: 40, borderRadius: 20,
-    backgroundColor: '#1f2937',
+    borderWidth: 1,
     alignItems: 'center', justifyContent: 'center',
     marginBottom: 20,
   },
   header: { marginBottom: 20 },
   logoMark: {
     width: 56, height: 56, borderRadius: 18,
-    backgroundColor: '#06b6d415',
-    borderWidth: 1.5, borderColor: '#06b6d430',
+    borderWidth: 1.5,
     alignItems: 'center', justifyContent: 'center',
     marginBottom: 16,
   },
-  title: { fontSize: 28, fontWeight: '800', color: '#f1f5f9', letterSpacing: 0.2 },
-  subtitle: { fontSize: 14, color: '#64748b', marginTop: 4 },
+  title: { fontSize: 28, fontWeight: '800', letterSpacing: 0.2 },
+  subtitle: { fontSize: 14, marginTop: 4 },
   featureRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 24 },
   featurePill: {
     flexDirection: 'row', alignItems: 'center',
-    backgroundColor: '#06b6d410',
-    borderWidth: 1, borderColor: '#06b6d420',
+    borderWidth: 1,
     borderRadius: 100, paddingHorizontal: 10, paddingVertical: 5,
     gap: 5,
   },
-  featureText: { fontSize: 11, color: '#94a3b8', fontWeight: '500' },
+  featureText: { fontSize: 11, fontWeight: '500' },
   card: {
-    backgroundColor: '#111827',
-    borderRadius: 24, borderWidth: 1, borderColor: '#1f2937',
+    borderRadius: 24, borderWidth: 1,
     padding: 24,
     shadowColor: '#000', shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.35, shadowRadius: 20, elevation: 10,
+    shadowOpacity: 0.15, shadowRadius: 20, elevation: 10,
     marginBottom: 20,
   },
   cardTitle: {
-    fontSize: 16, fontWeight: '700', color: '#94a3b8',
-    marginBottom: 20, letterSpacing: 0.5, textTransform: 'uppercase',
+    fontSize: 11, fontWeight: '700',
+    marginBottom: 20, letterSpacing: 1.2, textTransform: 'uppercase',
   },
   sectionDivider: {
     flexDirection: 'row', alignItems: 'center',
     gap: 12, marginBottom: 20, marginTop: 4,
   },
-  divLine: { flex: 1, height: 1, backgroundColor: '#1f2937' },
-  divText: { fontSize: 11, color: '#475569', fontWeight: '600', textTransform: 'uppercase' },
+  divLine: { flex: 1, height: 1 },
+  divText: { fontSize: 11, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.8 },
   signInRow: { flexDirection: 'row', justifyContent: 'center', paddingVertical: 8 },
-  signInText: { fontSize: 13, color: '#64748b' },
-  signInLink: { fontSize: 13, color: '#06b6d4', fontWeight: '600' },
+  signInText: { fontSize: 13 },
+  signInLink: { fontSize: 13, fontWeight: '600' },
 });

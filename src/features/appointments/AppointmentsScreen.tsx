@@ -24,12 +24,12 @@ interface EventFilter {
 const EVENT_FILTERS: EventFilter[] = [
   { key: 'APPOINTMENT', label: 'Appointments', icon: 'calendar-outline', color: '#3b82f6', bg: '#3b82f618' },
   { key: 'DELIVERY',    label: 'Deliveries',   icon: 'glasses-outline',  color: '#22c55e', bg: '#22c55e18' },
-  { key: 'PICKUP',      label: 'Pickups',      icon: 'cube-outline',     color: '#06b6d4', bg: '#06b6d418' },
+  { key: 'PICKUP',      label: 'Pickups',      icon: 'cube-outline',     color: '#6366f1', bg: '#6366f118' },
   { key: 'PAYMENT',     label: 'Payments',     icon: 'cash-outline',     color: '#ef4444', bg: '#ef444418' },
   { key: 'FOLLOW_UP',   label: 'Follow-ups',   icon: 'repeat-outline',   color: '#f97316', bg: '#f9731618' },
   { key: 'BIRTHDAY',    label: 'Birthdays',    icon: 'gift-outline',     color: '#ec4899', bg: '#ec489918' },
   { key: 'STOCK_ARRIVAL', label: 'Stock Orders',icon: 'download-outline', color: '#854d0e', bg: '#854d0e18' },
-  { key: 'STAFF',       label: 'Staff Schedule',icon: 'person-outline',  color: '#0891b2', bg: '#0891b218' },
+  { key: 'STAFF',       label: 'Staff Schedule',icon: 'person-outline',  color: '#4f46e5', bg: '#4f46e518' },
   { key: 'PERSONAL_NOTE',label: 'Reminders',   icon: 'document-text-outline', color: '#4f46e5', bg: '#4f46e518' },
   { key: 'VISIT',       label: 'Visits',        icon: 'medical-outline',  color: '#14b8a6', bg: '#14b8a618' },
 ];
@@ -550,10 +550,10 @@ export function AppointmentsScreen({ navigation }: { navigation: any }) {
           {item.type === 'DELIVERY' && item.status !== 'READY' && (
             <TouchableOpacity
               onPress={() => updateOrderStatusMutation.mutate({ orderId: item.sourceId, status: 'READY' })}
-              className="flex-row items-center bg-[#06b6d4]/10 border border-[#06b6d4]/20 px-3 py-1.5 rounded-xl"
+              className="flex-row items-center bg-primary/10 border border-primary/20 px-3 py-1.5 rounded-xl"
             >
-              <Ionicons name="checkmark-circle-outline" size={12} color="#06b6d4" />
-              <Text className="text-[#06b6d4] text-[11px] font-bold ml-1.5">Mark Ready for Pickup</Text>
+              <Ionicons name="checkmark-circle-outline" size={12} color="#6366f1" />
+              <Text className="text-primary text-[11px] font-bold ml-1.5">Mark Ready for Pickup</Text>
             </TouchableOpacity>
           )}
 
@@ -855,7 +855,7 @@ export function AppointmentsScreen({ navigation }: { navigation: any }) {
                 onPress={() => handleActionSheet('STAFF')}
                 className="w-[47%] bg-background border border-border p-4 rounded-2xl items-center"
               >
-                <Ionicons name="person" size={22} color="#0891b2" />
+                <Ionicons name="person" size={22} color="#4f46e5" />
                 <Text className="text-text font-semibold text-xs mt-2">Block/Staff Shift</Text>
               </TouchableOpacity>
             </View>

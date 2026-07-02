@@ -73,7 +73,7 @@ export function NotificationsScreen({ navigation }: NotificationsScreenProps) {
   const getNotificationIcon = (type: string) => {
     switch (type) {
       case 'NEW_ORDER':
-        return { name: 'cart-outline' as const, color: '#06b6d4', bg: 'bg-[#06b6d4]/10' };
+        return { name: 'cart-outline' as const, color: '#6366f1', bg: 'bg-primary/10' };
       case 'NEW_PRESCRIPTION':
         return { name: 'eye-outline' as const, color: '#a78bfa', bg: 'bg-[#a78bfa]/10' };
       case 'ORDER_READY':
@@ -113,7 +113,7 @@ export function NotificationsScreen({ navigation }: NotificationsScreenProps) {
         <View className="flex-1">
           <View className="flex-row justify-between items-center">
             <Text className="text-text font-bold text-sm flex-1">{item.title}</Text>
-            {isUnread && <View className="w-2.5 h-2.5 rounded-full bg-[#06b6d4] ml-2" />}
+            {isUnread && <View className="w-2.5 h-2.5 rounded-full bg-primary ml-2" />}
           </View>
           <Text className="text-textSecondary text-xs mt-1 leading-4">{item.message}</Text>
           <Text className="text-textMuted text-[10px] mt-2 font-medium">
@@ -144,7 +144,7 @@ export function NotificationsScreen({ navigation }: NotificationsScreenProps) {
           style={{ borderBottomWidth: filter === 'all' ? 2 : 0, borderBottomColor: colors.primary }}
           onPress={() => setFilter('all')}
         >
-          <Text className={`text-xs font-bold ${filter === 'all' ? 'text-[#06b6d4]' : 'text-textSecondary'}`}>
+          <Text className={`text-xs font-bold ${filter === 'all' ? 'text-primary' : 'text-textSecondary'}`}>
             All Alerts ({notifications.length})
           </Text>
         </TouchableOpacity>
@@ -153,7 +153,7 @@ export function NotificationsScreen({ navigation }: NotificationsScreenProps) {
           style={{ borderBottomWidth: filter === 'unread' ? 2 : 0, borderBottomColor: colors.primary }}
           onPress={() => setFilter('unread')}
         >
-          <Text className={`text-xs font-bold ${filter === 'unread' ? 'text-[#06b6d4]' : 'text-textSecondary'}`}>
+          <Text className={`text-xs font-bold ${filter === 'unread' ? 'text-primary' : 'text-textSecondary'}`}>
             Unread ({notifications.filter((n) => !readIds.includes(n.id)).length})
           </Text>
         </TouchableOpacity>

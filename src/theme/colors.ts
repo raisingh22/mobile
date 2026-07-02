@@ -9,62 +9,62 @@ export const lightColors = {
   cardHover: '#f1f5f9',
   border: '#cbd5e1',
   borderLight: '#e2e8f0',
-  borderGlow: '#06b6d420',
+  borderGlow: '#4f46e515',
   text: '#0f172a',
   textSecondary: '#475569',
   textMuted: '#64748b',
   textDisabled: '#94a3b8',
-  primary: '#0891b2',
-  primaryDark: '#0e7490',
-  primaryLight: '#06b6d4',
-  primaryGlow: '#06b6d420',
+  primary: '#4f46e5', // Premium Indigo 600
+  primaryDark: '#4338ca', // Indigo 700
+  primaryLight: '#6366f1', // Indigo 500
+  primaryGlow: '#4f46e518',
   success: '#10b981',
-  successGlow: '#10b98120',
+  successGlow: '#10b98118',
   warning: '#f59e0b',
-  warningGlow: '#f59e0b20',
+  warningGlow: '#f59e0b18',
   danger: '#ef4444',
-  dangerGlow: '#ef444420',
+  dangerGlow: '#ef444418',
   info: '#3b82f6',
-  infoGlow: '#3b82f620',
+  infoGlow: '#3b82f618',
   purple: '#8b5cf6',
-  purpleGlow: '#8b5cf620',
-  gradientStart: '#06b6d4',
-  gradientEnd: '#3b82f6',
-  heroStart: '#e0f2fe',
+  purpleGlow: '#8b5cf618',
+  gradientStart: '#4f46e5',
+  gradientEnd: '#6366f1',
+  heroStart: '#eef2ff', // Soft Indigo starter
   heroEnd: '#f8fafc80',
 };
 
 export const darkColors = {
-  background: '#07091280',
-  backgroundSolid: '#070912',
-  surface: '#0d1117',
-  card: '#111827',
-  cardHover: '#141f2e',
-  border: '#1f2937',
-  borderLight: '#2d3748',
-  borderGlow: '#06b6d430',
-  text: '#f1f5f9',
-  textSecondary: '#94a3b8',
+  background: '#090d1680', // Premium deep navy-slate background
+  backgroundSolid: '#090d16',
+  surface: '#0f172a', // Slate 900
+  card: '#131b2e', // Deep Slate Indigo-tinted Card
+  cardHover: '#1d2a4a',
+  border: '#1e293b',
+  borderLight: '#334155',
+  borderGlow: '#6366f120',
+  text: '#f8fafc', // Slate 50
+  textSecondary: '#94a3b8', // Slate 400
   textMuted: '#64748b',
   textDisabled: '#475569',
-  primary: '#06b6d4',
-  primaryDark: '#0891b2',
-  primaryLight: '#22d3ee',
-  primaryGlow: '#06b6d440',
+  primary: '#6366f1', // Indigo 500
+  primaryDark: '#4f46e5', // Indigo 600
+  primaryLight: '#818cf8', // Indigo 400
+  primaryGlow: '#6366f125',
   success: '#10b981',
-  successGlow: '#10b98130',
+  successGlow: '#10b98125',
   warning: '#f59e0b',
-  warningGlow: '#f59e0b30',
+  warningGlow: '#f59e0b25',
   danger: '#f43f5e',
-  dangerGlow: '#f43f5e30',
+  dangerGlow: '#f43f5e25',
   info: '#3b82f6',
-  infoGlow: '#3b82f630',
+  infoGlow: '#3b82f625',
   purple: '#a78bfa',
-  purpleGlow: '#a78bfa30',
-  gradientStart: '#06b6d4',
+  purpleGlow: '#a78bfa25',
+  gradientStart: '#6366f1',
   gradientEnd: '#3b82f6',
-  heroStart: '#0f1f3d',
-  heroEnd: '#07091280',
+  heroStart: '#111b36',
+  heroEnd: '#090d1680',
 };
 
 const getActiveColors = () => {
@@ -88,23 +88,23 @@ export const colors = new Proxy({}, {
 
 export const shadows = {
   primaryGlow: {
-    shadowColor: '#06b6d4',
+    shadowColor: '#6366f1',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.35,
-    shadowRadius: 12,
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
     elevation: 8,
   },
   dangerGlow: {
     shadowColor: '#f43f5e',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.25,
     shadowRadius: 10,
     elevation: 6,
   },
   cardShadow: {
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.15,
     shadowRadius: 8,
     elevation: 4,
   },

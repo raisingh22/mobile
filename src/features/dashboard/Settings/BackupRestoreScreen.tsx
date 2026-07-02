@@ -52,7 +52,7 @@ export function BackupRestoreScreen({ navigation }: any) {
   if (isLoading) {
     return (
       <View style={{ flex: 1, backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color="#06b6d4" />
+        <ActivityIndicator size="large" color="#6366f1" />
       </View>
     );
   }
@@ -61,7 +61,7 @@ export function BackupRestoreScreen({ navigation }: any) {
     <View style={{ flex: 1, backgroundColor: colors.background }}>
       <View className="bg-card border-b border-border px-6 pt-14 pb-4 flex-row items-center">
         <TouchableOpacity onPress={() => navigation.goBack()} className="mr-4">
-          <Ionicons name="arrow-back" size={24} color="#06b6d4" />
+          <Ionicons name="arrow-back" size={24} color="#6366f1" />
         </TouchableOpacity>
         <Text className="text-text text-lg font-bold">Backup & Restore</Text>
       </View>
@@ -71,7 +71,7 @@ export function BackupRestoreScreen({ navigation }: any) {
         <View className="bg-card rounded-xl p-5 border border-border mb-6 flex-row justify-between items-center">
           <View className="flex-1 mr-4">
             <View className="flex-row items-center mb-1">
-              <Ionicons name="cloud-upload-outline" size={18} color="#06b6d4" className="mr-2" />
+              <Ionicons name="cloud-upload-outline" size={18} color="#6366f1" className="mr-2" />
               <Text className="text-text text-base font-bold">Cloud Auto-Backup</Text>
             </View>
             <Text className="text-textSecondary text-xs leading-5">
@@ -81,7 +81,7 @@ export function BackupRestoreScreen({ navigation }: any) {
           <Switch
             value={autoBackup}
             onValueChange={toggleSwitch}
-            trackColor={{ false: '#374151', true: '#06b6d4' }}
+            trackColor={{ false: '#374151', true: '#6366f1' }}
             thumbColor={autoBackup ? '#ffffff' : '#9ca3af'}
           />
         </View>

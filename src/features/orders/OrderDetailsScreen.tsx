@@ -224,7 +224,7 @@ export function OrderDetailsScreen({ route, navigation }: OrderDetailsScreenProp
     return (
       <View style={{ flex: 1, backgroundColor: colors.background }} className="justify-center items-center p-6">
         <Text className="text-textSecondary mb-4">Order not found.</Text>
-        <TouchableOpacity onPress={() => navigation.goBack()} className="bg-[#06b6d4] px-4 py-2 rounded-lg">
+        <TouchableOpacity onPress={() => navigation.goBack()} className="bg-primary px-4 py-2 rounded-lg">
           <Text className="text-white font-bold">Go Back</Text>
         </TouchableOpacity>
       </View>
@@ -240,7 +240,7 @@ export function OrderDetailsScreen({ route, navigation }: OrderDetailsScreenProp
       {/* Header Bar */}
       <View className="bg-card border-b border-border px-6 pt-14 pb-4 flex-row justify-between items-center">
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="#06b6d4" />
+          <Ionicons name="arrow-back" size={24} color="#6366f1" />
         </TouchableOpacity>
         <Text className="text-text text-base font-bold">Order Details</Text>
         <View className="flex-row">
@@ -248,7 +248,7 @@ export function OrderDetailsScreen({ route, navigation }: OrderDetailsScreenProp
             className="mr-3"
             onPress={() => navigation.navigate('AddOrder', { order })}
           >
-            <Ionicons name="create-outline" size={22} color="#06b6d4" />
+            <Ionicons name="create-outline" size={22} color="#6366f1" />
           </TouchableOpacity>
           <TouchableOpacity onPress={handleDeletePress}>
             <Ionicons name="trash-outline" size={22} color="#ef4444" />
@@ -298,7 +298,7 @@ export function OrderDetailsScreen({ route, navigation }: OrderDetailsScreenProp
                 Dr. {order.prescription?.doctorName || 'Not specified'}
               </Text>
             </View>
-            <Text className="text-[#06b6d4] text-[10px] font-bold">View Lens Specs</Text>
+            <Text className="text-primary text-[10px] font-bold">View Lens Specs</Text>
           </TouchableOpacity>
         )}
 
@@ -390,7 +390,7 @@ export function OrderDetailsScreen({ route, navigation }: OrderDetailsScreenProp
               />
               <TouchableOpacity
                 onPress={handleRecordPayment}
-                className="bg-[#06b6d4] px-4 py-2 rounded-lg justify-center items-center"
+                className="bg-primary px-4 py-2 rounded-lg justify-center items-center"
               >
                 <Text className="text-white font-bold text-xs">Record</Text>
               </TouchableOpacity>
@@ -407,7 +407,7 @@ export function OrderDetailsScreen({ route, navigation }: OrderDetailsScreenProp
               onPress={() => statusMutation.mutate(status)}
               className={`px-4 py-2 rounded-lg mr-2.5 border ${
                 order.status === status
-                  ? 'bg-[#06b6d4] border-[#06b6d4]'
+                  ? 'bg-primary border-primary'
                   : 'bg-card border-border'
               }`}
             >
@@ -426,7 +426,7 @@ export function OrderDetailsScreen({ route, navigation }: OrderDetailsScreenProp
             <Text className="text-text text-sm font-medium">Send WhatsApp Update</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleSMS} className="flex-row items-center py-2.5 border-b border-border">
-            <Ionicons name="chatbubble-outline" size={20} color="#06b6d4" className="mr-3" />
+            <Ionicons name="chatbubble-outline" size={20} color="#6366f1" className="mr-3" />
             <Text className="text-text text-sm font-medium">Send SMS Update</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleEmail} className="flex-row items-center py-2.5 border-b border-border">

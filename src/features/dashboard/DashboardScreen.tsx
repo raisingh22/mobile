@@ -90,7 +90,7 @@ function DonutRing({ paid, total, size = 80 }: { paid: number; total: number; si
 // ── Notification icon helper ───────────────────────────────────────
 function getNotifIcon(type: string): { name: any; color: string; bg: string } {
   switch (type) {
-    case 'NEW_ORDER':         return { name: 'cart-outline',          color: '#06b6d4', bg: '#06b6d418' };
+    case 'NEW_ORDER':         return { name: 'cart-outline',          color: '#6366f1', bg: '#6366f118' };
     case 'NEW_PRESCRIPTION':  return { name: 'eye-outline',           color: '#a78bfa', bg: '#a78bfa18' };
     case 'ORDER_READY':       return { name: 'cube-outline',          color: '#10b981', bg: '#10b98118' };
     case 'LOW_STOCK':         return { name: 'warning-outline',       color: '#f59e0b', bg: '#f59e0b18' };
@@ -165,7 +165,7 @@ export function DashboardScreen({ navigation }: DashboardScreenProps) {
     return (
       <View style={[s.screen, s.center]}>
         <View style={s.loadingOrb}>
-          <Ionicons name="eye-outline" size={28} color="#06b6d4" />
+          <Ionicons name="eye-outline" size={28} color={colors.primary} />
         </View>
         <ActivityIndicator size="large" color={colors.primary} style={{ marginTop: 16 }} />
         <Text style={s.loadingText}>Loading your workspace...</Text>
@@ -189,7 +189,7 @@ export function DashboardScreen({ navigation }: DashboardScreenProps) {
   const paidRevenue = recentOrders.reduce((s: number, o: any) => s + (o.paidAmount || 0), 0);
 
   const METRICS = [
-    { label: 'Customers', value: stats.totalCustomers, icon: 'people-outline', color: '#06b6d4', bg: '#06b6d418', delay: 0 },
+    { label: 'Customers', value: stats.totalCustomers, icon: 'people-outline', color: colors.primary, bg: colors.primaryGlow, delay: 0 },
     { label: 'Active Orders', value: stats.activeOrders, icon: 'cube-outline', color: '#a78bfa', bg: '#a78bfa18', delay: 60 },
     { label: 'Completed', value: stats.completedOrders, icon: 'checkmark-circle-outline', color: '#10b981', bg: '#10b98118', delay: 120 },
     { label: "Today's Orders", value: stats.todaysOrders, icon: 'today-outline', color: '#f59e0b', bg: '#f59e0b18', delay: 180 },
@@ -216,7 +216,7 @@ export function DashboardScreen({ navigation }: DashboardScreenProps) {
               <Text style={s.greetingText}>{greeting} 👋</Text>
               <Text style={s.heroName} numberOfLines={1}>{user?.fullName}</Text>
               <View style={s.workspaceRow}>
-                <Ionicons name="business-outline" size={11} color="#64748b" />
+                <Ionicons name="business-outline" size={11} color={colors.textMuted} />
                 <Text style={s.workspaceName} numberOfLines={1}>{user?.workspace?.name}</Text>
               </View>
             </View>
@@ -225,7 +225,7 @@ export function DashboardScreen({ navigation }: DashboardScreenProps) {
                 style={s.notifBtn}
                 onPress={() => navigation.navigate('Notifications')}
               >
-                <Ionicons name="notifications-outline" size={19} color="#94a3b8" />
+                <Ionicons name="notifications-outline" size={19} color={colors.textSecondary} />
                 {unreadCount > 0 && (
                   <View style={s.badge}>
                     <Text style={s.badgeText}>{unreadCount > 9 ? '9+' : unreadCount}</Text>
@@ -269,16 +269,16 @@ export function DashboardScreen({ navigation }: DashboardScreenProps) {
               <Text style={s.revLabel}>Logged Expenses: ₹{(stats.totalExpenses ?? 0).toLocaleString('en-IN')}</Text>
             </View>
             <View style={s.revenueRow}>
-              <View style={[s.revDot, { backgroundColor: '#06b6d4' }]} />
-              <Text style={[s.revLabel, { color: '#06b6d4', fontWeight: 'bold' }]}>Net Profit: ₹{(stats.netProfit ?? 0).toLocaleString('en-IN')}</Text>
+              <View style={[s.revDot, { backgroundColor: colors.primary }]} />
+              <Text style={[s.revLabel, { color: colors.primary, fontWeight: 'bold' }]}>Net Profit: ₹{(stats.netProfit ?? 0).toLocaleString('en-IN')}</Text>
             </View>
             <View style={s.revenueRow}>
               <View style={[s.revDot, { backgroundColor: '#f43f5e' }]} />
               <Text style={[s.revLabel, { color: '#f43f5e', fontWeight: 'bold' }]}>Outstanding Dues: ₹{(stats.totalOutstanding ?? 0).toLocaleString('en-IN')}</Text>
             </View>
           </View>
-          <View style={{ width: 88, height: 88, borderRadius: 44, backgroundColor: '#06b6d418', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: '#06b6d430' }}>
-            <Ionicons name="wallet-outline" size={36} color="#06b6d4" />
+          <View style={{ width: 88, height: 88, borderRadius: 44, backgroundColor: colors.primaryGlow, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: colors.primary + '30' }}>
+            <Ionicons name="wallet-outline" size={36} color={colors.primary} />
           </View>
         </View>
 
@@ -320,9 +320,9 @@ export function DashboardScreen({ navigation }: DashboardScreenProps) {
           <Text style={[s.sectionTitle, { marginBottom: 12 }]}>Quick Actions</Text>
           <View style={s.quickGrid}>
             {[
-              { label: 'New Cust',         icon: 'person-add-outline', color: '#06b6d4', screen: 'AddEditCustomer', params: {} },
+              { label: 'New Cust',         icon: 'person-add-outline', color: colors.primary, screen: 'AddEditCustomer', params: {} },
               { label: 'New Order',        icon: 'cart-outline',        color: '#a78bfa', screen: 'AddOrder',        params: {} },
-              { label: 'Ledger Dues',      icon: 'wallet-outline',      color: '#0891b2', screen: 'Ledger',          params: {} },
+              { label: 'Ledger Dues',      icon: 'wallet-outline',      color: colors.info, screen: 'Ledger',          params: {} },
               { label: 'Receipt Pad',      icon: 'document-text-outline', color: '#f59e0b', screen: 'ReceiptPad',      params: {} },
             ].map((action) => (
               <TouchableOpacity
@@ -370,7 +370,7 @@ export function DashboardScreen({ navigation }: DashboardScreenProps) {
                   <View style={s.listContent}>
                     <Text style={s.listName}>{cust.fullName}</Text>
                     <View style={s.infoRow}>
-                      <Ionicons name="call-outline" size={11} color="#64748b" />
+                      <Ionicons name="call-outline" size={11} color={colors.textMuted} />
                       <Text style={s.infoText}>{cust.phone}</Text>
                     </View>
                   </View>
@@ -414,7 +414,7 @@ export function DashboardScreen({ navigation }: DashboardScreenProps) {
                       <StatusBadge status={order.status} size="sm" />
                     </View>
                     <View style={s.infoRow}>
-                      <Ionicons name="person-outline" size={11} color="#64748b" />
+                      <Ionicons name="person-outline" size={11} color={colors.textMuted} />
                       <Text style={s.infoText}>{order.customer?.fullName}</Text>
                     </View>
                   </View>
@@ -460,7 +460,7 @@ export function DashboardScreen({ navigation }: DashboardScreenProps) {
                   <View style={s.listContent}>
                     <Text style={s.listName}>{debtor.customerName}</Text>
                     <View style={s.infoRow}>
-                      <Ionicons name="call-outline" size={11} color="#64748b" />
+                      <Ionicons name="call-outline" size={11} color={colors.textMuted} />
                       <Text style={s.infoText}>{debtor.phone}</Text>
                     </View>
                   </View>

@@ -73,7 +73,7 @@ export function ExpensesScreen({ navigation }: any) {
   if (isLoading) {
     return (
       <View style={{ flex: 1, backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color="#06b6d4" />
+        <ActivityIndicator size="large" color="#6366f1" />
       </View>
     );
   }
@@ -84,11 +84,11 @@ export function ExpensesScreen({ navigation }: any) {
       <View className="bg-card border-b border-border px-6 pt-14 pb-4 flex-row items-center justify-between">
         <View className="flex-row items-center">
           <TouchableOpacity onPress={() => navigation.goBack()} className="mr-4">
-            <Ionicons name="arrow-back" size={24} color="#06b6d4" />
+            <Ionicons name="arrow-back" size={24} color="#6366f1" />
           </TouchableOpacity>
           <Text className="text-text text-lg font-bold">Expense Tracker</Text>
         </View>
-        <TouchableOpacity onPress={() => setModalVisible(true)} className="bg-[#06b6d4] w-9 h-9 rounded-full items-center justify-center">
+        <TouchableOpacity onPress={() => setModalVisible(true)} className="bg-primary w-9 h-9 rounded-full items-center justify-center">
           <Ionicons name="add" size={22} color="#fff" />
         </TouchableOpacity>
       </View>
@@ -179,7 +179,7 @@ export function ExpensesScreen({ navigation }: any) {
             <TouchableOpacity
               onPress={handleSave}
               disabled={createMutation.isPending}
-              className="bg-[#06b6d4] rounded-lg py-3 items-center"
+              className="bg-primary rounded-lg py-3 items-center"
             >
               {createMutation.isPending ? (
                 <ActivityIndicator color="#fff" />

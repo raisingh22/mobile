@@ -54,7 +54,7 @@ function OrderCard({ item, onPress }: { item: any; onPress: () => void }) {
         {/* Customer & Specs */}
         <View style={s.customerRow}>
           <View style={s.avatarSm}>
-            <Ionicons name="person-outline" size={12} color="#06b6d4" />
+            <Ionicons name="person-outline" size={12} color="#6366f1" />
           </View>
           <Text style={s.customerName}>{item.customer?.fullName}</Text>
         </View>

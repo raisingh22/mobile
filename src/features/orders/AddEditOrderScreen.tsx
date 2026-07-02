@@ -189,7 +189,7 @@ export function AddEditOrderScreen({ route, navigation }: AddEditOrderScreenProp
       <View style={{ flex: 1, backgroundColor: colors.background }}>
         <View className="bg-card border-b border-border px-6 pt-14 pb-4 flex-row justify-between items-center">
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text className="text-[#06b6d4] text-sm font-semibold">Cancel</Text>
+            <Text className="text-primary text-sm font-semibold">Cancel</Text>
           </TouchableOpacity>
           <Text className="text-text text-base font-bold">Select Customer</Text>
           <View style={{ width: 50 }} />
@@ -230,7 +230,7 @@ export function AddEditOrderScreen({ route, navigation }: AddEditOrderScreenProp
                   <Text className="text-textMuted text-sm">No customers found.</Text>
                   <TouchableOpacity
                     onPress={() => navigation.navigate('AddEditCustomer')}
-                    className="bg-[#06b6d4] px-4 py-2 rounded-lg mt-4"
+                    className="bg-primary px-4 py-2 rounded-lg mt-4"
                   >
                     <Text className="text-white font-bold text-xs">Add New Customer</Text>
                   </TouchableOpacity>
@@ -253,7 +253,7 @@ export function AddEditOrderScreen({ route, navigation }: AddEditOrderScreenProp
       {/* Header Bar */}
       <View className="bg-card border-b border-border px-6 pt-14 pb-4 flex-row justify-between items-center">
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text className="text-[#06b6d4] text-sm font-semibold">Cancel</Text>
+          <Text className="text-primary text-sm font-semibold">Cancel</Text>
         </TouchableOpacity>
         <Text className="text-text text-base font-bold">{editOrder ? 'Edit Order' : 'New Order'}</Text>
         <View style={{ width: 50 }} />
@@ -288,7 +288,7 @@ export function AddEditOrderScreen({ route, navigation }: AddEditOrderScreenProp
                 onPress={() => navigation.navigate('AddPrescription', { customerId: selectedCustomerId })}
                 className="bg-border px-3 py-1.5 rounded-lg border border-border mt-3"
               >
-                <Text className="text-[#06b6d4] text-xs font-bold">Add Prescription</Text>
+                <Text className="text-primary text-xs font-bold">Add Prescription</Text>
               </TouchableOpacity>
             </View>
           ) : (
@@ -299,11 +299,11 @@ export function AddEditOrderScreen({ route, navigation }: AddEditOrderScreenProp
               <TouchableOpacity
                 onPress={() => setValue('prescriptionId', '')}
                 className={`p-3 rounded-lg border mb-2 flex-row justify-between items-center ${
-                  !activePrescriptionId ? 'bg-[#06b6d4]/10 border-[#06b6d4]' : 'bg-background border-border'
+                  !activePrescriptionId ? 'bg-primary/10 border-primary' : 'bg-background border-border'
                 }`}
               >
                 <Text className="text-text text-xs font-semibold">No Prescription (Custom/Plano)</Text>
-                {!activePrescriptionId && <Ionicons name="checkmark-circle" size={16} color="#06b6d4" />}
+                {!activePrescriptionId && <Ionicons name="checkmark-circle" size={16} color="#6366f1" />}
               </TouchableOpacity>
 
               {/* Prescriptions List */}
@@ -312,7 +312,7 @@ export function AddEditOrderScreen({ route, navigation }: AddEditOrderScreenProp
                   key={presc.id}
                   onPress={() => setValue('prescriptionId', presc.id)}
                   className={`p-3 rounded-lg border mb-2 flex-row justify-between items-center ${
-                    activePrescriptionId === presc.id ? 'bg-[#06b6d4]/10 border-[#06b6d4]' : 'bg-background border-border'
+                    activePrescriptionId === presc.id ? 'bg-primary/10 border-primary' : 'bg-background border-border'
                   }`}
                 >
                   <View>
@@ -323,7 +323,7 @@ export function AddEditOrderScreen({ route, navigation }: AddEditOrderScreenProp
                       Doctor: {presc.doctorName || 'Not specified'}
                     </Text>
                   </View>
-                  {activePrescriptionId === presc.id && <Ionicons name="checkmark-circle" size={16} color="#06b6d4" />}
+                  {activePrescriptionId === presc.id && <Ionicons name="checkmark-circle" size={16} color="#6366f1" />}
                 </TouchableOpacity>
               ))}
             </View>
@@ -512,7 +512,7 @@ export function AddEditOrderScreen({ route, navigation }: AddEditOrderScreenProp
           {/* Dynamic Math Total Output Box */}
           <View className="bg-background rounded-xl p-4 border border-border mb-4 flex-row justify-between items-center">
             <Text className="text-text font-bold text-sm">Grand Total:</Text>
-            <Text className="text-[#06b6d4] font-black text-lg">₹{totalCalculated.toFixed(2)}</Text>
+            <Text className="text-primary font-black text-lg">₹{totalCalculated.toFixed(2)}</Text>
           </View>
 
           <Text className="text-textSecondary text-xs mb-1.5">Amount Paid (₹)</Text>
@@ -583,7 +583,7 @@ export function AddEditOrderScreen({ route, navigation }: AddEditOrderScreenProp
         </View>
 
         <TouchableOpacity
-          className="bg-[#06b6d4] rounded-lg py-3.5 items-center flex-row justify-center"
+          className="bg-primary rounded-lg py-3.5 items-center flex-row justify-center"
           onPress={handleSubmit(onSubmit)}
           disabled={isSubmitting}
         >
